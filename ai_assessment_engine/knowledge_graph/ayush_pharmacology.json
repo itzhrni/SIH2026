@@ -1,0 +1,74 @@
+{
+  "domain_id": "ayush_pharmacology",
+  "domain_name": "Standardized Ayurvedic Pharmacology & Quality Control",
+  "sector": "Ayush & Healthcare",
+  "description": "Phytochemical analysis, standardization of herbal formulations, HPLC/HPTLC profiling, GMP regulations, and clinical validation.",
+  "concepts": [
+    {
+      "id": "herbal_standardization",
+      "name": "Phytochemical Standardization & Chromatography",
+      "description": "Fingerprinting active botanical markers using High-Performance Thin-Layer Chromatography (HPTLC) and HPLC.",
+      "weight": 1.4,
+      "prerequisites": [],
+      "foundational_question": "Explain how HPTLC and HPLC fingerprinting are used to standardize polyherbal Ayurvedic formulations (such as Triphala or Ashwagandha extracts) against marker compounds.",
+      "targeted_probes": [
+        "How do you distinguish authentic raw botanical materials from common adulterants using marker compound retention times and spectral matching?",
+        "What are the challenges of batch-to-batch variation due to seasonal/geographic harvesting differences, and how do you establish acceptable tolerance limits?"
+      ],
+      "rubric": {
+        "correctness_criteria": "Explains chromatographic separation, retention factor (Rf), and marker quantification (e.g., Withaferin A in Ashwagandha, Gallic acid in Triphala).",
+        "depth_criteria": "Details stationary phase, mobile phase selection, UV/MS detection, and limit of quantification (LOQ).",
+        "tradeoff_criteria": "Compares whole-extract synergistic profiling vs single-isolate marker standardization.",
+        "applicability_criteria": "Applies Pharmacopoeial standards (Ayurvedic Pharmacopoeia of India - API) for quality verification.",
+        "sub_gaps_taxonomy": [
+          "Chromatography_Principle_Gap",
+          "Marker_Quantification_Deficit",
+          "Adulteration_Detection_Lacks"
+        ]
+      },
+      "learning_resources": [
+        {
+          "title": "Phytochemistry & Herbal Drug Standardization",
+          "provider": "All India Institute of Ayurveda (AIIA) / NPTEL",
+          "url": "https://nptel.ac.in/courses/ayush-phytochem",
+          "duration_hours": 12,
+          "level": "Advanced"
+        }
+      ]
+    },
+    {
+      "id": "ayush_gmp_qc",
+      "name": "Good Manufacturing Practices (GMP) & Heavy Metal/Microbial Limits",
+      "description": "Schedule T compliance, heavy metal limits (AAS/ICP-MS), pesticide residue, and aflatoxin contamination testing.",
+      "weight": 1.3,
+      "prerequisites": [
+        "herbal_standardization"
+      ],
+      "foundational_question": "What are the mandatory quality control parameters for classical and proprietary Ayurvedic medicines under Schedule T of the Drugs and Cosmetics Act regarding heavy metals and microbial load?",
+      "targeted_probes": [
+        "What are the permissible limits for Lead, Cadmium, Arsenic, and Mercury under API/WHO guidelines, and how are Bhasmas scientifically detoxified through Shodhana?",
+        "How do accelerated stability testing protocols determine the shelf life of Ayurvedic asavas, arishtas, and tailas?"
+      ],
+      "rubric": {
+        "correctness_criteria": "States regulatory limits for heavy metals (Lead <= 10ppm, Arsenic <= 3ppm, etc.) and microbial limits (E. coli, Salmonella absence).",
+        "depth_criteria": "Explains spectroscopic analysis (AAS/ICP-MS) and stability testing conditions (ICH/API guidelines: 40C/75% RH).",
+        "tradeoff_criteria": "Distinguishes toxic raw heavy metal contamination from scientifically processed organo-metallic Bhasmas.",
+        "applicability_criteria": "Formulates SOPs for export-grade compliance (US FDA / EU botanical guidelines).",
+        "sub_gaps_taxonomy": [
+          "Schedule_T_Unawareness",
+          "Heavy_Metal_Testing_Gap",
+          "Stability_Protocol_Deficit"
+        ]
+      },
+      "learning_resources": [
+        {
+          "title": "Regulatory Compliance & GMP in AYUSH Industries",
+          "provider": "Ministry of Ayush / AIIA Training Program",
+          "url": "https://portal.collab.edu/courses/ayush-gmp",
+          "duration_hours": 8,
+          "level": "Intermediate"
+        }
+      ]
+    }
+  ]
+}

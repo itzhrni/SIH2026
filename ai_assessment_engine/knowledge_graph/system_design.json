@@ -1,0 +1,173 @@
+{
+  "domain_id": "system_design",
+  "domain_name": "System Design",
+  "sector": "Engineering & IT",
+  "description": "Distributed systems, architectural scalability, caching, load balancing, and database partitioning.",
+  "concepts": [
+    {
+      "id": "load_balancing",
+      "name": "Load Balancing",
+      "description": "Distributing network traffic across multiple servers (L4 vs L7, Round Robin, Consistent Hashing).",
+      "weight": 1.2,
+      "prerequisites": [],
+      "foundational_question": "Explain how a Layer 7 load balancer differs from a Layer 4 load balancer. When would you choose one over the other in a high-traffic microservices architecture?",
+      "targeted_probes": [
+        "How does consistent hashing prevent massive cache invalidation when a load-balanced server fails?",
+        "What are the trade-offs of using sticky sessions (session affinity) on a Layer 7 load balancer?"
+      ],
+      "rubric": {
+        "correctness_criteria": "Accurately distinguishes L4 (transport/TCP/IP packet level) from L7 (application/HTTP/header/URL level).",
+        "depth_criteria": "Explains inspection overhead, SSL termination, and content-based routing mechanics.",
+        "tradeoff_criteria": "Analyzes latency/CPU overhead of L7 vs lack of routing intelligence in L4.",
+        "applicability_criteria": "Applies to real-world scenarios like path-based routing (/api/v1/auth vs /api/v1/feed) or DDoS mitigation.",
+        "sub_gaps_taxonomy": [
+          "L4_L7_Confusion",
+          "Consistent_Hashing_Deficit",
+          "Sticky_Session_Bottlenecks"
+        ]
+      },
+      "learning_resources": [
+        {
+          "title": "Scalable Microservices & Load Balancing",
+          "provider": "NPTEL / IIT Kharagpur",
+          "url": "https://nptel.ac.in/courses/system-design",
+          "duration_hours": 6,
+          "level": "Intermediate"
+        },
+        {
+          "title": "NGINX & Envoy L7 Architecture Deep Dive",
+          "provider": "Industry Partner Module (DevOps)",
+          "url": "https://portal.collab.edu/courses/l7-lb",
+          "duration_hours": 4,
+          "level": "Advanced"
+        }
+      ]
+    },
+    {
+      "id": "caching",
+      "name": "Caching",
+      "description": "In-memory caching strategies (Cache-Aside, Write-Through, Write-Back), eviction policies (LRU, LFU), and Cache Stampede prevention.",
+      "weight": 1.3,
+      "prerequisites": [
+        "load_balancing"
+      ],
+      "foundational_question": "Compare the Cache-Aside pattern with the Write-Through caching pattern. How do you handle cache invalidation and prevent cache stampede during high concurrency?",
+      "targeted_probes": [
+        "What happens when a hot key expires in Redis while 10,000 requests per second are requesting it, and how do mutex locks or probabilistic early expiration (XFetch) mitigate this?",
+        "What are the consistency trade-offs of Write-Back (Write-Behind) caching during an unexpected cache node crash?"
+      ],
+      "rubric": {
+        "correctness_criteria": "Accurately defines Cache-Aside (app manages read/write to cache & DB) vs Write-Through (cache updates DB synchronously).",
+        "depth_criteria": "Explains TTL, eviction strategies (LRU vs LFU), and distributed locking.",
+        "tradeoff_criteria": "Identifies eventual consistency risks, write latency vs read latency, and data loss risks in Write-Back.",
+        "applicability_criteria": "Provides solutions for Cache Stampede/Thundering Herd (e.g., distributed locks, probabilistic early expiration, background warming).",
+        "sub_gaps_taxonomy": [
+          "Cache_Stampede_Blindspot",
+          "Invalidation_Consistency_Lacks",
+          "Eviction_Policy_Misunderstanding"
+        ]
+      },
+      "learning_resources": [
+        {
+          "title": "High-Performance Distributed Caching",
+          "provider": "NPTEL",
+          "url": "https://nptel.ac.in/courses/caching-systems",
+          "duration_hours": 8,
+          "level": "Intermediate"
+        },
+        {
+          "title": "Redis Enterprise Architectural Patterns",
+          "provider": "Industry Partner Module",
+          "url": "https://portal.collab.edu/courses/redis-architecture",
+          "duration_hours": 5,
+          "level": "Advanced"
+        }
+      ]
+    },
+    {
+      "id": "db_sharding",
+      "name": "DB Sharding",
+      "description": "Horizontal database partitioning, shard key selection, re-sharding strategies, cross-shard joins, and distributed transactions (2PC/Saga).",
+      "weight": 1.5,
+      "prerequisites": [
+        "caching"
+      ],
+      "foundational_question": "Explain horizontal database sharding. How do you choose an effective Shard Key to avoid hotspotting, and how do you handle cross-shard queries?",
+      "targeted_probes": [
+        "What happens when your user base grows 10x and an existing shard key distribution becomes uneven? How does consistent hashing or directory-based sharding help in re-sharding?",
+        "How does the CAP theorem apply when executing distributed transactions across sharded databases, and why is the Saga pattern preferred over Two-Phase Commit (2PC)?"
+      ],
+      "rubric": {
+        "correctness_criteria": "Defines horizontal partitioning (splitting rows across multiple DB instances) vs vertical partitioning.",
+        "depth_criteria": "Explains shard key cardinality, hashing algorithms, and scatter-gather query execution.",
+        "tradeoff_criteria": "Evaluates cross-shard join complexity, secondary index overhead, and re-sharding operational complexity.",
+        "applicability_criteria": "Proposes realistic solutions for hotspotting (e.g., salt/composite keys) and distributed consistency (Saga/Outbox pattern).",
+        "sub_gaps_taxonomy": [
+          "Shard_Key_Hotspotting_Ignorance",
+          "Cross_Shard_Join_Blindspot",
+          "ReSharding_Strategy_Deficit",
+          "Distributed_Consistency_Weakness"
+        ]
+      },
+      "learning_resources": [
+        {
+          "title": "Database Engineering & Sharding at Scale",
+          "provider": "NPTEL / IIT Madras",
+          "url": "https://nptel.ac.in/courses/db-sharding",
+          "duration_hours": 12,
+          "level": "Advanced"
+        },
+        {
+          "title": "Practical Distributed Partitioning with PostgreSQL & Citus",
+          "provider": "Industry Training Module",
+          "url": "https://portal.collab.edu/courses/citus-sharding",
+          "duration_hours": 6,
+          "level": "Advanced"
+        }
+      ]
+    },
+    {
+      "id": "scalability",
+      "name": "Scalability",
+      "description": "End-to-end horizontal scaling, stateless architectures, asynchronous event-driven messaging, and resilient fault isolation.",
+      "weight": 1.2,
+      "prerequisites": [
+        "load_balancing",
+        "caching",
+        "db_sharding"
+      ],
+      "foundational_question": "How do you design a high-throughput event processing architecture that scales gracefully to 100,000 events/sec while guaranteeing at-least-once or exactly-once processing?",
+      "targeted_probes": [
+        "How do consumer groups and partition assignment in message brokers (like Kafka/RabbitMQ) ensure horizontal scale without out-of-order processing?",
+        "How do circuit breakers and rate limiters prevent cascading failures in an auto-scaling microservices cluster?"
+      ],
+      "rubric": {
+        "correctness_criteria": "Accurately details decoupling via message brokers, stateless application tiers, and idempotency.",
+        "depth_criteria": "Explains partition ordering guarantees, backpressure handling, and graceful degradation.",
+        "tradeoff_criteria": "Weighs synchronous REST/gRPC vs asynchronous messaging (Kafka/SQS) and exactly-once processing overhead.",
+        "applicability_criteria": "Demonstrates practical resilience patterns (Circuit Breaker, Bulkhead, Exponential Backoff with Jitter).",
+        "sub_gaps_taxonomy": [
+          "Idempotency_Missing",
+          "Backpressure_Unawareness",
+          "Cascading_Failure_Vulnerability"
+        ]
+      },
+      "learning_resources": [
+        {
+          "title": "Cloud Computing and Distributed Systems",
+          "provider": "NPTEL / IIT Roorkee",
+          "url": "https://nptel.ac.in/courses/cloud-scalability",
+          "duration_hours": 10,
+          "level": "Intermediate"
+        },
+        {
+          "title": "Event-Driven Microservices Architecture",
+          "provider": "Industry Certification Track",
+          "url": "https://portal.collab.edu/courses/event-driven-scale",
+          "duration_hours": 8,
+          "level": "Advanced"
+        }
+      ]
+    }
+  ]
+}
