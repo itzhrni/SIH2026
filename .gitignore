@@ -1,6 +1,26 @@
-﻿__pycache__/
+# Node dependencies
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+dist/
+build/
+.next/
+
+# Environment variables
+.env
+backend/.env
+frontend/.env
+*.env.local
+
+# Python caches
+__pycache__/
 *.py[cod]
 .pytest_cache/
-.env
+.pytest_cache.zip
 .venv/
 venv/
+
+# Artifacts & Docs
+*.zip
+*.docx
+scratch/
