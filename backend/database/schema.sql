@@ -178,4 +178,4 @@ CREATE INDEX idx_applications_job_id ON applications(job_id);
 CREATE INDEX idx_applications_internship_id ON applications(internship_id);
 CREATE INDEX idx_skill_demand_region_sector ON skill_demand(region, sector);
 CREATE INDEX idx_student_skill_profiles_student_id ON student_skill_profiles(student_id);
-CREATE INDEX idx_institutional_expertise_institution_id ON institutional_expertise(institution_id);cd 
+CREATE INDEX idx_institutional_expertise_institution_id ON institutional_expertise(institution_id);
