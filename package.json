@@ -1,0 +1,15 @@
+{
+  "name": "sih-2026-workspace",
+  "version": "1.0.0",
+  "description": "SIH 2026 - Academia-Industry Platform Unified Monorepo",
+  "scripts": {
+    "start": "npm --prefix backend start",
+    "dev": "npm --prefix backend start",
+    "backend": "npm --prefix backend start",
+    "install:backend": "npm --prefix backend install",
+    "install:all": "npm --prefix backend install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
