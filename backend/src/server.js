@@ -9,6 +9,20 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Root URL handler (so browser visits don't say 'Cannot GET /')
+app.get('/', (req, res) => {
+  res.json({
+    status: 'online',
+    message: '🚀 SIH 2026 Unified Backend API is running successfully!',
+    endpoints: {
+      health: '/health',
+      auth: '/api/auth',
+      testDbConnection: '/api/auth/test-connection'
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Base Health check
 app.get('/health', (req, res) => {
   res.json({
