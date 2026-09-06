@@ -6,6 +6,20 @@ const router = express.Router();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'sih_jwt_secret_key_2026';
 
+const ROLE_MAP = {
+  student: 'STUDENT',
+  STUDENT: 'STUDENT',
+  company: 'INDUSTRY',
+  industry: 'INDUSTRY',
+  INDUSTRY: 'INDUSTRY',
+  faculty: 'ACADEMICIAN',
+  academician: 'ACADEMICIAN',
+  ACADEMICIAN: 'ACADEMICIAN',
+  admin: 'INSTITUTIONAL_ADMIN',
+  institutional_admin: 'INSTITUTIONAL_ADMIN',
+  INSTITUTIONAL_ADMIN: 'INSTITUTIONAL_ADMIN'
+};
+
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -25,16 +39,18 @@ const authenticateToken = (req, res, next) => {
 
 router.post('/register', async (req, res) => {
   try {
-    const { email, password, role, full_name, first_name, last_name, company_name, contact_person_name } = req.body;
+    const { email, password, role, name, full_name, institution, department, expertise } = req.body;
 
     if (!email || !password || !role) {
       return res.status(400).json({ error: 'Email, password, and role are required' });
     }
 
-    const validRoles = ['student', 'company', 'faculty', 'admin'];
-    if (!validRoles.includes(role)) {
-      return res.status(400).json({ error: `Invalid role. Must be one of: ${validRoles.join(', ')}` });
+    const normalizedRole = ROLE_MAP[role];
+    if (!normalizedRole) {
+      return res.status(400).json({ error: `Invalid role. Must be one of: STUDENT, INDUSTRY, ACADEMICIAN, INSTITUTIONAL_ADMIN` });
     }
+
+    const userName = name || full_name || email.split('@')[0];
 
     const { data: existingUser } = await supabase
       .from('users')
@@ -47,40 +63,27 @@ router.post('/register', async (req, res) => {
     }
 
     const salt = await bcrypt.genSalt(10);
-    const password_hash = await bcrypt.hash(password, salt);
+    const passwordHash = await bcrypt.hash(password, salt);
+    const now = new Date().toISOString();
 
     const { data: newUser, error: insertError } = await supabase
       .from('users')
       .insert([{
+        id: `usr_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
         email: email.toLowerCase().trim(),
-        password_hash,
-        role,
-        full_name
+        name: userName,
+        passwordHash,
+        role: normalizedRole,
+        institution: institution || null,
+        department: department || null,
+        expertise: expertise || null,
+        createdAt: now,
+        updatedAt: now
       }])
-      .select('id, email, role, full_name, created_at')
+      .select('id, email, role, name, createdAt')
       .single();
 
     if (insertError) throw insertError;
-
-    if (role === 'student') {
-      await supabase.from('students').insert([{
-        user_id: newUser.id,
-        first_name,
-        last_name
-      }]);
-    } else if (role === 'faculty') {
-      await supabase.from('faculty').insert([{
-        user_id: newUser.id,
-        first_name,
-        last_name
-      }]);
-    } else if (role === 'company') {
-      await supabase.from('companies').insert([{
-        user_id: newUser.id,
-        company_name: company_name || 'My Company',
-        contact_person_name: contact_person_name || full_name
-      }]);
-    }
 
     const token = jwt.sign(
       { userId: newUser.id, email: newUser.email, role: newUser.role },
@@ -117,7 +120,12 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password_hash);
+    const userHash = user.passwordHash || user.password_hash;
+    if (!userHash) {
+      return res.status(401).json({ error: 'Invalid account configuration' });
+    }
+
+    const isMatch = await bcrypt.compare(password, userHash);
     if (!isMatch) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
@@ -128,6 +136,7 @@ router.post('/login', async (req, res) => {
       { expiresIn: '7d' }
     );
 
+    delete user.passwordHash;
     delete user.password_hash;
     res.json({
       message: 'Login successful',
@@ -144,7 +153,7 @@ router.get('/me', authenticateToken, async (req, res) => {
   try {
     const { data: user, error } = await supabase
       .from('users')
-      .select('id, email, role, full_name, created_at')
+      .select('id, email, role, name, createdAt')
       .eq('id', req.user.userId)
       .single();
 
@@ -162,11 +171,11 @@ router.get('/test-connection', async (req, res) => {
   try {
     const { data, error } = await supabase
       .from('users')
-      .select('id')
-      .limit(1);
+      .select('id, email, name, role')
+      .limit(5);
 
     if (error) throw error;
-    res.json({ success: true, message: 'Supabase connected successfully!', data });
+    res.json({ success: true, message: 'Supabase connected successfully!', count: data.length, data });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

@@ -3,7 +3,7 @@
  * Tests all M3-M6 endpoints against running dev server
  */
 
-const BASE_URL = "http://localhost:3001";
+const BASE_URL = process.env.TEST_URL || "http://localhost:3000";
 let passed = 0;
 let failed = 0;
 const results = [];
@@ -19,20 +19,21 @@ function log(test, status, details) {
 async function testRegister() {
   console.log("\n=== TESTING: Registration ===");
   try {
+    const userPayload = {
+      name: "Integration Test User",
+      email: `inttest_${Date.now()}@example.com`,
+      password: "Demo@1234",
+      role: "STUDENT",
+    };
     const res = await fetch(`${BASE_URL}/api/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: "Integration Test User",
-        email: `inttest_${Date.now()}@example.com`,
-        password: "Demo@1234",
-        role: "STUDENT",
-      }),
+      body: JSON.stringify(userPayload),
     });
     const data = await res.json();
     if (data.success && data.data.id) {
-      log("Register", "PASS", `Created user ${data.data.id}`);
-      return data.data;
+      log("Register", "PASS", `Created user ${data.data.id} (${userPayload.email})`);
+      return { ...data.data, email: userPayload.email, password: userPayload.password };
     } else {
       log("Register", "FAIL", JSON.stringify(data));
       return null;
@@ -44,33 +45,37 @@ async function testRegister() {
 }
 
 async function testLogin(session) {
-  console.log("\n=== TESTING: Login ===");
+  console.log(`\n=== TESTING: Login (${session.email}) ===`);
   try {
-    const res = await fetch(`${BASE_URL}/api/auth/signin`, {
+    // 1. Fetch CSRF token
+    const csrfRes = await fetch(`${BASE_URL}/api/auth/csrf`);
+    const { csrfToken } = await csrfRes.json();
+    const rawCsrfCookie = csrfRes.headers.get("set-cookie") || "";
+    const csrfCookie = rawCsrfCookie.split(";")[0];
+
+    // 2. Submit credentials to NextAuth callback
+    const res = await fetch(`${BASE_URL}/api/auth/callback/credentials`, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
+        Cookie: csrfCookie,
       },
       body: new URLSearchParams({
+        csrfToken,
         email: session.email,
-        password: "Demo@1234",
-        callbackUrl: `${BASE_URL}/`,
+        password: session.password || "Demo@1234",
+        json: "true",
       }),
-      credentials: "include",
-      redirect: "manual", // Don't follow redirects
     });
-    // Check if we got a redirect (which means login succeeded)
-    if (res.status === 302 || res.status === 303) {
-      const cookie = res.headers.get("set-cookie");
-      log("Login", "PASS", `Redirect received for ${session.email}`);
+
+    const setCookie = res.headers.get("set-cookie") || "";
+    const tokenMatch = setCookie.match(/next-auth\.session-token=([^;]+)/);
+    if (tokenMatch) {
+      const cookie = `next-auth.session-token=${tokenMatch[1]}`;
+      log("Login", "PASS", `Session authenticated for ${session.email}`);
       return { ...session, cookie };
     } else {
-      const text = await res.text();
-      log(
-        "Login",
-        "FAIL",
-        `Status ${res.status}, response: ${text.substring(0, 100)}`,
-      );
+      log("Login", "FAIL", `No session token returned in set-cookie (status ${res.status})`);
       return null;
     }
   } catch (err) {
@@ -136,7 +141,7 @@ async function testAssessmentStart(session) {
     });
     const data = await res.json();
     if (data.success && data.data.sessionId) {
-      log("Assessment Start", "PASS", `Session ${data.data.sessionId} created`);
+      log("Assessment Start", "PASS", `Session ${data.data.sessionId} created with question: "${data.data.question.slice(0, 50)}..."`);
       return data.data;
     } else {
       log("Assessment Start", "FAIL", JSON.stringify(data));
@@ -148,7 +153,7 @@ async function testAssessmentStart(session) {
   }
 }
 
-async function testAssessmentRespond(session, sessionId) {
+async function testAssessmentRespond(session, startResult) {
   console.log("\n=== TESTING: Assessment Respond ===");
   try {
     const res = await fetch(`${BASE_URL}/api/assess/respond`, {
@@ -158,8 +163,11 @@ async function testAssessmentRespond(session, sessionId) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        sessionId,
-        answer: "This is a test response to the assessment question.",
+        sessionId: startResult.sessionId,
+        conceptNodeId: startResult.conceptNodeId,
+        question: startResult.question,
+        turnIndex: startResult.turnIndex,
+        answer: "Arrays store elements contiguously in memory allowing O(1) random access, but resizing requires O(n) reallocation.",
       }),
     });
     const data = await res.json();
@@ -167,7 +175,7 @@ async function testAssessmentRespond(session, sessionId) {
       log(
         "Assessment Respond",
         "PASS",
-        `Response accepted, next question: ${!!data.data.question}`,
+        `Response evaluated, turn: ${data.data.turnIndex}, isComplete: ${data.data.isComplete}`,
       );
       return data.data;
     } else {
@@ -203,13 +211,26 @@ async function testApplications(session) {
 async function testCandidateDiscovery() {
   console.log("\n=== TESTING: Candidate Discovery ===");
   try {
-    const res = await fetch(`${BASE_URL}/api/candidates?skills=dsa,python`);
+    // Log in as industry recruiter
+    const recruiterSession = await testLogin({
+      email: "recruiter.vikram@techcorp.dev",
+      password: "Demo@1234",
+    });
+
+    if (!recruiterSession) {
+      log("Candidate Discovery", "FAIL", "Could not authenticate recruiter");
+      return [];
+    }
+
+    const res = await fetch(`${BASE_URL}/api/candidates?skills=dsa`, {
+      headers: { Cookie: recruiterSession.cookie },
+    });
     const data = await res.json();
     if (data.success && Array.isArray(data.data)) {
       log(
         "Candidate Discovery",
         "PASS",
-        `Found ${data.data.length} candidates`,
+        `Found ${data.data.length} candidates for recruiter`,
       );
       return data.data;
     } else {
@@ -242,12 +263,22 @@ async function testLearningPrograms(session) {
   }
 }
 
-async function testInternshipTracker(session) {
+async function testInternshipTracker() {
   console.log("\n=== TESTING: Internship Tracker ===");
   try {
-    // First, get existing internship records from seed
+    // Log in as Priya (who has seeded internship records)
+    const priyaSession = await testLogin({
+      email: "student.priya@skillledger.dev",
+      password: "Demo@1234",
+    });
+
+    if (!priyaSession) {
+      log("Internship Tracker", "FAIL", "Could not authenticate Priya");
+      return false;
+    }
+
     const res = await fetch(`${BASE_URL}/api/internships`, {
-      headers: { Cookie: session.cookie },
+      headers: { Cookie: priyaSession.cookie },
     });
     const data = await res.json();
     if (data.success && data.data.length > 0) {
@@ -255,7 +286,7 @@ async function testInternshipTracker(session) {
       const trackerRes = await fetch(
         `${BASE_URL}/api/internships/${internshipId}/tracker`,
         {
-          headers: { Cookie: session.cookie },
+          headers: { Cookie: priyaSession.cookie },
         },
       );
       const trackerData = await trackerRes.json();
@@ -282,30 +313,20 @@ async function testInternshipTracker(session) {
 
 async function testAdminAnalytics() {
   console.log("\n=== TESTING: Admin Analytics ===");
-  // Login as admin
-  const adminRes = await fetch(`${BASE_URL}/api/auth/signin`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      email: "admin@swan.gov.in",
-      password: "Demo@1234",
-      callbackUrl: `${BASE_URL}/`,
-    }),
-    credentials: "include",
-    redirect: "manual",
+  const adminSession = await testLogin({
+    email: "admin@swan.gov.in",
+    password: "Demo@1234",
   });
 
-  if (!adminRes.ok) {
+  if (!adminSession) {
     log("Admin Analytics", "FAIL", "Could not login as admin");
     return;
   }
 
-  const adminCookie = adminRes.headers.get("set-cookie");
-
   try {
     // Test cohort analytics
     const cohortRes = await fetch(`${BASE_URL}/api/analytics/cohort`, {
-      headers: { Cookie: adminCookie },
+      headers: { Cookie: adminSession.cookie },
     });
     const cohortData = await cohortRes.json();
     if (cohortData.success) {
@@ -320,7 +341,7 @@ async function testAdminAnalytics() {
 
     // Test demand analytics
     const demandRes = await fetch(`${BASE_URL}/api/analytics/demand`, {
-      headers: { Cookie: adminCookie },
+      headers: { Cookie: adminSession.cookie },
     });
     const demandData = await demandRes.json();
     if (demandData.success) {
@@ -335,7 +356,7 @@ async function testAdminAnalytics() {
 
     // Test placement analytics
     const placementRes = await fetch(`${BASE_URL}/api/analytics/placement`, {
-      headers: { Cookie: adminCookie },
+      headers: { Cookie: adminSession.cookie },
     });
     const placementData = await placementRes.json();
     if (placementData.success) {
@@ -376,10 +397,10 @@ async function runAllTests() {
   // Step 3: Test assessment flow
   const assessmentSession = await testAssessmentStart(loggedSession);
   if (assessmentSession) {
-    await testAssessmentRespond(loggedSession, assessmentSession.sessionId);
+    await testAssessmentRespond(loggedSession, assessmentSession);
   }
 
-  // Step 4: Test external features
+  // Step 4: Test candidate discovery & learning programs
   await testCandidateDiscovery();
   await testLearningPrograms(loggedSession);
 
@@ -387,7 +408,7 @@ async function runAllTests() {
   await testAdminAnalytics();
 
   // Step 6: Test internship tracker
-  await testInternshipTracker(loggedSession);
+  await testInternshipTracker();
 
   // Print summary
   console.log("\n" + "=".repeat(50));
