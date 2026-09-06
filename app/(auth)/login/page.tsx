@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,6 +35,21 @@ function LoginForm() {
   const [loadingRole, setLoadingRole] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  function getPortalPathForRole(role?: string) {
+    switch (role) {
+      case "STUDENT":
+        return "/student/dashboard";
+      case "INDUSTRY":
+        return "/industry/recruiter-dashboard";
+      case "ACADEMICIAN":
+        return "/acad/opportunity-feed";
+      case "INSTITUTIONAL_ADMIN":
+        return "/admin/swan-dashboard";
+      default:
+        return "/student/dashboard";
+    }
+  }
+
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -50,10 +65,11 @@ function LoginForm() {
       setError("Invalid email or password. Please verify credentials.");
       setLoadingRole(null);
     } else {
+      const session = await getSession();
       const destination =
         callbackUrl && !callbackUrl.includes("/login")
           ? callbackUrl
-          : "/student/dashboard";
+          : getPortalPathForRole(session?.user.role);
       window.location.href = destination;
     }
   }
@@ -152,6 +168,31 @@ function LoginForm() {
                 Aarav Sharma (Demo Student Candidate)
               </span>
               {loadingRole === "student" ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <ArrowRight className="w-4 h-4 text-foreground-muted" />
+              )}
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full justify-between bg-card"
+              onClick={() =>
+                handleQuickLogin(
+                  "prof.sharma@aims.edu",
+                  "Demo@1234",
+                  "/acad/opportunity-feed",
+                  "academician",
+                )
+              }
+              disabled={loadingRole !== null}
+            >
+              <span className="flex items-center gap-2 text-foreground-muted">
+                <GraduationCap className="w-4 h-4" />
+                Dr. Ananya Sharma (Academician)
+              </span>
+              {loadingRole === "academician" ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <ArrowRight className="w-4 h-4 text-foreground-muted" />
