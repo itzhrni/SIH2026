@@ -1,0 +1,72 @@
+{
+  "domain": "ayurvedic-pharmacology",
+  "displayName": "Ayurvedic Pharmacology (Dravyaguna)",
+  "version": "1.0.0",
+  "nodes": [
+    {
+      "id": "rasa-panchaka",
+      "label": "Rasa Panchaka (Five Pharmacological Attributes)",
+      "topicId": "dravyaguna-fundamentals",
+      "dependencies": [],
+      "rubric": {
+        "correctness": "Can the student correctly identify and explain Rasa (taste), Guna (quality), Virya (potency), Vipaka (post-digestive effect), and Prabhava (specific action) for key herbs?",
+        "depth": "Does the student understand how Rasa Panchaka attributes interact to determine therapeutic action and contraindications?",
+        "tradeoffAwareness": "Can the student explain why two herbs with similar Rasa may have different therapeutic outcomes due to Prabhava?",
+        "realWorldApplicability": "Can the student use Rasa Panchaka analysis to select an appropriate herb for a Pitta-aggravated digestive disorder?"
+      },
+      "importance": 1.0
+    },
+    {
+      "id": "virya-vipaka",
+      "label": "Virya & Vipaka",
+      "topicId": "dravyaguna-fundamentals",
+      "dependencies": ["rasa-panchaka"],
+      "rubric": {
+        "correctness": "Can the student define Ushna (hot) and Sheeta (cold) Virya and explain Madhura, Amla, and Katu Vipaka and their effects on doshas?",
+        "depth": "Does the student understand the sequential transformation: Rasa → Virya → Vipaka and how they govern short-term vs long-term drug action?",
+        "tradeoffAwareness": "Can the student explain cases where Virya contradicts Rasa expectations (e.g., Amalaki — Sour Rasa but Madhura Vipaka)?",
+        "realWorldApplicability": "Can the student apply Virya and Vipaka knowledge to predict the long-term effects of an Ashwagandha formulation on a Vata patient?"
+      },
+      "importance": 0.95
+    },
+    {
+      "id": "formulation-methods",
+      "label": "Ayurvedic Formulation Methods (Kalpana)",
+      "topicId": "formulation",
+      "dependencies": ["rasa-panchaka", "virya-vipaka"],
+      "rubric": {
+        "correctness": "Can the student describe Swarasa (juice), Kalka (paste), Kwatha (decoction), Hima (cold infusion), and Phanta (hot infusion) preparation methods?",
+        "depth": "Does the student understand how formulation method affects bioavailability, potency, and shelf life of herbal preparations?",
+        "tradeoffAwareness": "When is a Kwatha preferred over Asava/Arishta? How does Shodhana (purification) change a toxic substance's therapeutic profile?",
+        "realWorldApplicability": "Can the student formulate a Triphala Kwatha for a geriatric patient with impaired digestion and explain the dose-duration rationale?"
+      },
+      "importance": 0.9
+    },
+    {
+      "id": "herb-drug-interactions",
+      "label": "Herb-Drug Interactions & Safety",
+      "topicId": "pharmacovigilance",
+      "dependencies": ["rasa-panchaka", "virya-vipaka"],
+      "rubric": {
+        "correctness": "Can the student identify known herb-drug interactions (e.g., Ginkgo + anticoagulants, St. John's Wort + CYP450 inducers)?",
+        "depth": "Does the student understand CYP450 enzyme modulation, P-glycoprotein interactions, and Ayurvedic pharmacokinetics in the context of modern polypharmacy?",
+        "tradeoffAwareness": "How does the student balance integrative medicine benefits against interaction risks for a patient on warfarin?",
+        "realWorldApplicability": "Can the student counsel a patient on safely combining Ashwagandha supplementation with their prescribed antidepressant regimen?"
+      },
+      "importance": 0.85
+    },
+    {
+      "id": "dosha-pharmacology",
+      "label": "Dosha-Based Pharmacology",
+      "topicId": "dravyaguna-fundamentals",
+      "dependencies": ["rasa-panchaka"],
+      "rubric": {
+        "correctness": "Can the student identify herbs that pacify or aggravate each Dosha (Vata, Pitta, Kapha) and explain the pharmacological basis?",
+        "depth": "Does the student understand the concept of Samanya-Vishesha (similarity-dissimilarity principle) in selecting dravyas for dosha management?",
+        "tradeoffAwareness": "How does a tridoshic herb like Triphala maintain balance without aggravating any single dosha?",
+        "realWorldApplicability": "Can the student design a seasonal Rasayana protocol for a Vata-Kapha constitution patient based on dosha pharmacology?"
+      },
+      "importance": 0.9
+    }
+  ]
+}

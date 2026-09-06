@@ -1,0 +1,72 @@
+{
+  "domain": "core-cs",
+  "displayName": "Core Computer Science",
+  "version": "1.0.0",
+  "nodes": [
+    {
+      "id": "os-process-scheduling",
+      "label": "OS Process Scheduling",
+      "topicId": "operating-systems",
+      "dependencies": [],
+      "rubric": {
+        "correctness": "Can the student explain FCFS, SJF, Round Robin, and Priority scheduling algorithms and calculate average waiting time?",
+        "depth": "Does the student understand context switching overhead, CPU burst prediction, multilevel feedback queues, and real-time scheduling?",
+        "tradeoffAwareness": "What are the starvation risks with priority scheduling? When is preemptive vs non-preemptive scheduling preferred?",
+        "realWorldApplicability": "Can the student analyse how Linux CFS scheduler works and why it benefits interactive workloads over batch jobs?"
+      },
+      "importance": 0.9
+    },
+    {
+      "id": "memory-management",
+      "label": "Memory Management & Virtual Memory",
+      "topicId": "operating-systems",
+      "dependencies": ["os-process-scheduling"],
+      "rubric": {
+        "correctness": "Can the student explain paging, segmentation, TLB, page replacement algorithms (LRU, CLOCK), and page faults?",
+        "depth": "Does the student understand demand paging, working set model, thrashing, and memory-mapped files?",
+        "tradeoffAwareness": "Fixed vs variable partitioning trade-offs? How does page size affect TLB hit rate and internal fragmentation?",
+        "realWorldApplicability": "Can the student diagnose a memory leak or thrashing scenario in a production JVM application?"
+      },
+      "importance": 0.85
+    },
+    {
+      "id": "tcp-ip-networking",
+      "label": "TCP/IP Networking",
+      "topicId": "networking",
+      "dependencies": [],
+      "rubric": {
+        "correctness": "Can the student explain the TCP three-way handshake, flow control (sliding window), congestion control (AIMD), and DNS resolution?",
+        "depth": "Does the student understand TCP vs UDP trade-offs, HTTP/2 multiplexing, TLS handshake, and NAT traversal?",
+        "tradeoffAwareness": "When is UDP preferred over TCP (video streaming, gaming)? How does head-of-line blocking affect HTTP/1.1?",
+        "realWorldApplicability": "Can the student debug a latency issue in a microservice using Wireshark captures and TCP state diagrams?"
+      },
+      "importance": 0.9
+    },
+    {
+      "id": "db-normalisation",
+      "label": "Relational DB Design & Normalisation",
+      "topicId": "databases",
+      "dependencies": [],
+      "rubric": {
+        "correctness": "Can the student define 1NF, 2NF, 3NF, BCNF and identify functional dependencies and candidate keys?",
+        "depth": "Does the student understand denormalisation trade-offs, index design (B-tree vs hash), MVCC, and ACID properties?",
+        "tradeoffAwareness": "When to denormalise for read performance vs maintain normalisation for write integrity?",
+        "realWorldApplicability": "Can the student design a normalised schema for a hospital records system and identify which queries need composite indexes?"
+      },
+      "importance": 0.85
+    },
+    {
+      "id": "concurrency-synchronisation",
+      "label": "Concurrency & Synchronisation",
+      "topicId": "operating-systems",
+      "dependencies": ["os-process-scheduling", "memory-management"],
+      "rubric": {
+        "correctness": "Can the student explain mutex, semaphore, monitors, deadlock conditions (Coffman), and detection/prevention?",
+        "depth": "Does the student understand race conditions, memory models (happens-before), lock-free data structures, and actor model?",
+        "tradeoffAwareness": "Optimistic vs pessimistic locking? When are lock-free algorithms worth the complexity cost?",
+        "realWorldApplicability": "Can the student identify a deadlock in a multi-threaded Java service and redesign the locking protocol to prevent it?"
+      },
+      "importance": 0.8
+    }
+  ]
+}
