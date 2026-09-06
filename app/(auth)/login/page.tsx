@@ -50,7 +50,11 @@ function LoginForm() {
       setError("Invalid email or password. Please verify credentials.");
       setLoadingRole(null);
     } else {
-      window.location.href = callbackUrl;
+      const destination =
+        callbackUrl && !callbackUrl.includes("/login")
+          ? callbackUrl
+          : "/student/dashboard";
+      window.location.href = destination;
     }
   }
 
@@ -73,11 +77,7 @@ function LoginForm() {
       setError("Failed to authenticate with demo credentials: " + res.error);
       setLoadingRole(null);
     } else {
-      const destination =
-        callbackUrl && !callbackUrl.includes("/login")
-          ? callbackUrl
-          : defaultPath;
-      window.location.href = destination;
+      window.location.href = defaultPath;
     }
   }
 

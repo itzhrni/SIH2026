@@ -11,12 +11,42 @@ import { verifyPassword } from "@/lib/auth/password";
  * id and role to the default Session/JWT types.
  */
 export const nextAuthConfig: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET || "sih_2026_super_secret_jwt_key",
   session: {
     strategy: "jwt",
   },
 
   pages: {
     signIn: "/login",
+  },
+
+  cookies: {
+    sessionToken: {
+      name: "next-auth.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: false,
+      },
+    },
+    callbackUrl: {
+      name: "next-auth.callback-url",
+      options: {
+        sameSite: "lax",
+        path: "/",
+        secure: false,
+      },
+    },
+    csrfToken: {
+      name: "next-auth.csrf-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: false,
+      },
+    },
   },
 
   providers: [

@@ -2,20 +2,36 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
+const SECRET = process.env.NEXTAUTH_SECRET || "sih_2026_super_secret_jwt_key";
+
 // Role → path prefix mapping
 const ROLE_ROUTES: Record<string, string> = {
   "/student": "STUDENT",
+  "/dashboard": "STUDENT",
+  "/assess": "STUDENT",
+  "/portfolio": "STUDENT",
+  "/opportunities": "STUDENT",
+  "/applications": "STUDENT",
+  "/learning-programs": "STUDENT",
   "/industry": "INDUSTRY",
+  "/recruiter-dashboard": "INDUSTRY",
+  "/pipeline": "INDUSTRY",
+  "/candidates": "INDUSTRY",
+  "/my-postings": "INDUSTRY",
+  "/post": "INDUSTRY",
   "/admin": "INSTITUTIONAL_ADMIN",
+  "/swan-dashboard": "INSTITUTIONAL_ADMIN",
   "/acad": "ACADEMICIAN",
+  "/opportunity-feed": "ACADEMICIAN",
+  "/student-applications": "ACADEMICIAN",
 };
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Find which role-protected prefix this path falls under
-  const protectedPrefix = Object.keys(ROLE_ROUTES).find((prefix) =>
-    pathname.startsWith(prefix),
+  const protectedPrefix = Object.keys(ROLE_ROUTES).find(
+    (prefix) => pathname === prefix || pathname.startsWith(prefix + "/"),
   );
 
   // Path is not role-protected — allow through
@@ -23,11 +39,17 @@ export async function middleware(request: NextRequest) {
 
   const requiredRole = ROLE_ROUTES[protectedPrefix];
 
-  // Retrieve JWT token (works with next-auth JWT strategy)
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
+  // Retrieve JWT token (works with next-auth JWT strategy across all environments)
+  const token =
+    (await getToken({
+      req: request,
+      secret: SECRET,
+      cookieName: "next-auth.session-token",
+    })) ||
+    (await getToken({
+      req: request,
+      secret: SECRET,
+    }));
 
   // Not authenticated → redirect to /login
   if (!token) {
@@ -38,7 +60,8 @@ export async function middleware(request: NextRequest) {
 
   // Wrong role → redirect to /login
   if (token.role !== requiredRole) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    const loginUrl = new URL("/login", request.url);
+    return NextResponse.redirect(loginUrl);
   }
 
   return NextResponse.next();
@@ -46,14 +69,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths EXCEPT:
-     * - _next/static (static files)
-     * - _next/image (Next.js image optimisation)
-     * - favicon.ico
-     * - api/auth (NextAuth routes — must be public)
-     * - Public root paths (/, /login, /register)
-     */
-    "/((?!_next/static|_next/image|favicon\\.ico|api/auth|login|register).*)",
+    "/((?!_next/static|_next/image|favicon\\.ico|api/auth|login|register|$).*)",
   ],
 };
