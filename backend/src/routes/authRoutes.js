@@ -6,9 +6,6 @@ const router = express.Router();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'sih_jwt_secret_key_2026';
 
-/**
- * Middleware to authenticate JWT tokens
- */
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -26,13 +23,9 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-/**
- * POST /api/auth/register
- * Registers a new user with bcrypt password hashing and auto-creates role records.
- */
 router.post('/register', async (req, res) => {
   try {
-    const { email, password, role, full_name, company_name } = req.body;
+    const { email, password, role, full_name, first_name, last_name, company_name, contact_person_name } = req.body;
 
     if (!email || !password || !role) {
       return res.status(400).json({ error: 'Email, password, and role are required' });
@@ -43,7 +36,6 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: `Invalid role. Must be one of: ${validRoles.join(', ')}` });
     }
 
-    // Check if user already exists
     const { data: existingUser } = await supabase
       .from('users')
       .select('id')
@@ -54,36 +46,42 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'User with this email already exists' });
     }
 
-    // Hash password with bcrypt
     const salt = await bcrypt.genSalt(10);
     const password_hash = await bcrypt.hash(password, salt);
 
-    // Insert user into users table
     const { data: newUser, error: insertError } = await supabase
       .from('users')
       .insert([{
         email: email.toLowerCase().trim(),
         password_hash,
-        role
+        role,
+        full_name
       }])
-      .select('id, email, role, created_at')
+      .select('id, email, role, full_name, created_at')
       .single();
 
     if (insertError) throw insertError;
 
-    // Automatically create role-specific profile row
     if (role === 'student') {
-      await supabase.from('students').insert([{ user_id: newUser.id }]);
+      await supabase.from('students').insert([{
+        user_id: newUser.id,
+        first_name,
+        last_name
+      }]);
+    } else if (role === 'faculty') {
+      await supabase.from('faculty').insert([{
+        user_id: newUser.id,
+        first_name,
+        last_name
+      }]);
     } else if (role === 'company') {
       await supabase.from('companies').insert([{
         user_id: newUser.id,
-        company_name: company_name || 'My Company'
+        company_name: company_name || 'My Company',
+        contact_person_name: contact_person_name || full_name
       }]);
-    } else if (role === 'faculty') {
-      await supabase.from('faculty').insert([{ user_id: newUser.id }]);
     }
 
-    // Generate JWT token
     const token = jwt.sign(
       { userId: newUser.id, email: newUser.email, role: newUser.role },
       JWT_SECRET,
@@ -101,10 +99,6 @@ router.post('/register', async (req, res) => {
   }
 });
 
-/**
- * POST /api/auth/login
- * Verifies email/password and returns signed JWT token.
- */
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -113,7 +107,6 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
-    // Fetch user from database
     const { data: user, error } = await supabase
       .from('users')
       .select('*')
@@ -124,13 +117,11 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    // Verify hashed password
     const isMatch = await bcrypt.compare(password, user.password_hash);
     if (!isMatch) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    // Generate JWT token
     const token = jwt.sign(
       { userId: user.id, email: user.email, role: user.role },
       JWT_SECRET,
@@ -149,15 +140,11 @@ router.post('/login', async (req, res) => {
   }
 });
 
-/**
- * GET /api/auth/me
- * Retrieves current authenticated user profile
- */
 router.get('/me', authenticateToken, async (req, res) => {
   try {
     const { data: user, error } = await supabase
       .from('users')
-      .select('id, email, role, created_at')
+      .select('id, email, role, full_name, created_at')
       .eq('id', req.user.userId)
       .single();
 
@@ -171,10 +158,6 @@ router.get('/me', authenticateToken, async (req, res) => {
   }
 });
 
-/**
- * GET /api/auth/test-connection
- * Verifies Supabase connection
- */
 router.get('/test-connection', async (req, res) => {
   try {
     const { data, error } = await supabase
@@ -183,7 +166,7 @@ router.get('/test-connection', async (req, res) => {
       .limit(1);
 
     if (error) throw error;
-    res.json({ success: true, message: 'Supabase Database Connected successfully!', data });
+    res.json({ success: true, message: 'Supabase connected successfully!', data });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
