@@ -1,0 +1,59 @@
+{
+  "domain": "clinical-practice",
+  "displayName": "Clinical Practice & Diagnostics",
+  "version": "1.0.0",
+  "nodes": [
+    {
+      "id": "rogipariksha",
+      "label": "Patient Examination (Rogipariksha)",
+      "topicId": "diagnosis",
+      "dependencies": [],
+      "rubric": {
+        "correctness": "Can the student describe the Ashtasthana Pariksha (8-point examination: Nadi, Mutra, Mala, Jihva, Shabda, Sparsha, Drik, Akruti) and Dashavidha Pariksha?",
+        "depth": "Does the student understand how Nadi (pulse) diagnosis reflects the current state of all three doshas and their sub-types?",
+        "tradeoffAwareness": "When is Ashtasthana Pariksha insufficient and must be supplemented with modern diagnostic tests?",
+        "realWorldApplicability": "Can the student conduct a complete Rogipariksha for a patient presenting with chronic fatigue and correctly document the Prakriti-Vikriti differential?"
+      },
+      "importance": 1.0
+    },
+    {
+      "id": "symptom-differential",
+      "label": "Symptom Differential Diagnosis",
+      "topicId": "diagnosis",
+      "dependencies": ["rogipariksha"],
+      "rubric": {
+        "correctness": "Can the student differentiate Vata-type, Pitta-type, and Kapha-type presentations of similar symptoms (e.g., three types of Jwara/fever)?",
+        "depth": "Does the student understand Samprapti (pathogenesis) — the 6 stages of disease development (Sanchaya → Pradosha → Prakopavastha)?",
+        "tradeoffAwareness": "When does a symptom cluster require referral to modern medicine vs Ayurvedic management? What are the red flags?",
+        "realWorldApplicability": "Can the student correctly differentiate Amavata (similar to RA) from Sandhi-gata Vata (osteoarthritis) and propose distinct treatment plans?"
+      },
+      "importance": 0.95
+    },
+    {
+      "id": "treatment-planning",
+      "label": "Treatment Planning (Chikitsa Sutras)",
+      "topicId": "therapeutics",
+      "dependencies": ["rogipariksha", "symptom-differential"],
+      "rubric": {
+        "correctness": "Can the student apply the Chikitsa Chatushpada (4 components: Physician, Drug, Attendant, Patient) and design a Shodhan vs Shaman treatment protocol?",
+        "depth": "Does the student understand Panchakarma indications/contraindications, seasonal regimens (Ritucharya), and Pathya-Apathya (dietary codes)?",
+        "tradeoffAwareness": "When is Shodhana (elimination therapy) preferred over Shamana (palliation)? How does patient Bala (strength) affect the choice?",
+        "realWorldApplicability": "Can the student design a complete 21-day Panchakarma treatment plan for a corporate executive with chronic stress-induced Pitta disorders?"
+      },
+      "importance": 0.95
+    },
+    {
+      "id": "prakriti-assessment",
+      "label": "Prakriti (Constitution) Assessment",
+      "topicId": "diagnosis",
+      "dependencies": ["rogipariksha"],
+      "rubric": {
+        "correctness": "Can the student assess Deha Prakriti (physical constitution) and Manasa Prakriti (psychological constitution) using validated questionnaires and clinical observation?",
+        "depth": "Does the student understand the genetic and epigenetic basis of Prakriti and its implications for personalised medicine and disease susceptibility?",
+        "tradeoffAwareness": "How does Vikriti (current imbalance) differ from Prakriti (baseline constitution), and how does this distinction guide treatment sequencing?",
+        "realWorldApplicability": "Can the student use Prakriti assessment to predict a patient's drug metabolism pattern and customise an Ayurvedic formulation accordingly?"
+      },
+      "importance": 0.85
+    }
+  ]
+}

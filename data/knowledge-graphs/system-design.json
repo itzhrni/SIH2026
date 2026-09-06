@@ -1,0 +1,89 @@
+{
+  "domain": "system-design",
+  "displayName": "System Design & Architecture",
+  "version": "1.0.0",
+  "nodes": [
+    {
+      "id": "load-balancing",
+      "label": "Load Balancing",
+      "topicId": "scalability",
+      "dependencies": [],
+      "rubric": {
+        "correctness": "Can the student explain round-robin, least-connections, and consistent hashing load balancing strategies?",
+        "depth": "Does the student understand L4 vs L7 load balancers, health checks, session affinity, and failover?",
+        "tradeoffAwareness": "When is consistent hashing preferred over round-robin? How does sticky sessions affect scalability?",
+        "realWorldApplicability": "Can the student design a load-balanced architecture for a high-traffic e-commerce checkout or API gateway?"
+      },
+      "importance": 0.9
+    },
+    {
+      "id": "caching-strategies",
+      "label": "Caching Strategies",
+      "topicId": "performance",
+      "dependencies": ["load-balancing"],
+      "rubric": {
+        "correctness": "Can the student describe cache-aside, write-through, write-behind, and read-through patterns?",
+        "depth": "Does the student understand eviction policies (LRU, LFU, TTL), cache stampede, and distributed cache coherence?",
+        "tradeoffAwareness": "When to use Redis vs Memcached? In-process cache vs distributed cache? What are the consistency trade-offs?",
+        "realWorldApplicability": "Can the student identify cache layers (CDN, application, database) appropriate for a social media feed?"
+      },
+      "importance": 0.95
+    },
+    {
+      "id": "database-sharding",
+      "label": "Database Sharding & Replication",
+      "topicId": "data-layer",
+      "dependencies": [],
+      "rubric": {
+        "correctness": "Can the student explain horizontal sharding, shard keys, and read replica patterns?",
+        "depth": "Does the student understand resharding challenges, hotspot keys, cross-shard queries, and replication lag?",
+        "tradeoffAwareness": "When to shard vs scale vertically? Master-slave vs multi-master replication trade-offs?",
+        "realWorldApplicability": "Can the student shard a user table by geography or hash for a global social platform with 100M users?"
+      },
+      "importance": 0.85
+    },
+    {
+      "id": "message-queues",
+      "label": "Message Queues & Event Streaming",
+      "topicId": "async-communication",
+      "dependencies": ["load-balancing"],
+      "rubric": {
+        "correctness": "Can the student distinguish between message queues (RabbitMQ), event streams (Kafka), and pub/sub patterns?",
+        "depth": "Does the student understand at-least-once vs exactly-once delivery, consumer groups, partitioning, and backpressure?",
+        "tradeoffAwareness": "When to use synchronous REST vs asynchronous queuing? Kafka vs SQS vs RabbitMQ?",
+        "realWorldApplicability": "Can the student design an order processing system using event-driven architecture with guaranteed delivery?"
+      },
+      "importance": 0.85
+    },
+    {
+      "id": "microservices",
+      "label": "Microservices Architecture",
+      "topicId": "architectural-patterns",
+      "dependencies": [
+        "load-balancing",
+        "message-queues",
+        "caching-strategies"
+      ],
+      "rubric": {
+        "correctness": "Can the student decompose a monolith into services, define service boundaries (DDD), and explain API gateways?",
+        "depth": "Does the student understand service discovery, circuit breakers, distributed tracing, and saga patterns?",
+        "tradeoffAwareness": "Monolith vs microservices trade-offs? When does operational overhead outweigh scalability benefits?",
+        "realWorldApplicability": "Can the student design a ride-hailing system with separate services for matching, pricing, notifications, and payments?"
+      },
+      "importance": 1.0
+    },
+    {
+      "id": "cap-theorem",
+      "label": "CAP Theorem & Consistency Models",
+      "topicId": "distributed-systems",
+      "dependencies": ["database-sharding"],
+      "rubric": {
+        "correctness": "Can the student explain CAP theorem, eventual consistency, strong consistency, and quorum reads/writes?",
+        "depth": "Does the student understand PACELC, linearisability, causal consistency, and conflict resolution strategies?",
+        "tradeoffAwareness": "When to accept eventual consistency (shopping carts) vs strong consistency (bank transfers)?",
+        "realWorldApplicability": "Can the student choose between DynamoDB, Cassandra, and PostgreSQL for a distributed inventory system?"
+      },
+      "importance": 0.9
+    }
+  ]
+}

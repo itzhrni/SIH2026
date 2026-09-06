@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Surfaces */
+    --background: 0 0% 100%;
+    --background-subtle: 210 20% 98%;
+    --background-muted: 214 32% 96%;
+
+    /* Foregrounds */
+    --foreground: 222 47% 11%;
+    --foreground-muted: 215 16% 47%;
+    --foreground-subtle: 215 20% 65%;
+
+    /* Card */
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    /* Border */
+    --border: 214 32% 91%;
+    --border-strong: 213 27% 84%;
+    --input: 214 32% 91%;
+    --ring: 211 100% 42%;
+
+    /* Primary (Cobalt) */
+    --primary: 211 100% 42%;
+    --primary-hover: 210 83% 40%;
+    --primary-subtle: 214 100% 97%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary (Slate neutral) */
+    --secondary: 214 32% 91%;
+    --secondary-foreground: 222 47% 11%;
+
+    /* Muted */
+    --muted: 214 32% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    /* Accent */
+    --accent: 214 32% 96%;
+    --accent-foreground: 222 47% 11%;
+
+    /* Status */
+    --success: 140 65% 25%;
+    --success-bg: 138 76% 97%;
+    --success-border: 141 79% 85%;
+
+    --warning: 27 87% 29%;
+    --warning-bg: 48 100% 96%;
+    --warning-border: 46 97% 77%;
+
+    --destructive: 343 84% 35%;
+    --destructive-bg: 356 100% 97%;
+    --destructive-border: 352 96% 90%;
+
+    --info: 226 71% 40%;
+    --info-bg: 214 100% 97%;
+    --info-border: 213 94% 88%;
+
+    /* Popover */
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* Radius */
+    --radius: 0.375rem;
+  }
+
+  .dark {
+    --background: 222 47% 7%;
+    --background-subtle: 224 53% 5%;
+    --background-muted: 217 33% 17%;
+
+    --foreground: 210 40% 98%;
+    --foreground-muted: 215 20% 65%;
+    --foreground-subtle: 215 16% 47%;
+
+    --card: 222 47% 7%;
+    --card-foreground: 210 40% 98%;
+
+    --border: 217 33% 17%;
+    --border-strong: 215 25% 27%;
+    --input: 217 33% 17%;
+    --ring: 211 100% 60%;
+
+    --primary: 211 100% 60%;
+    --primary-hover: 210 100% 66%;
+    --primary-subtle: 220 47% 14%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 217 33% 17%;
+    --accent-foreground: 210 40% 98%;
+
+    --popover: 222 47% 7%;
+    --popover-foreground: 210 40% 98%;
+
+    --destructive: 0 63% 31%;
+    --destructive-bg: 0 47% 11%;
+    --destructive-border: 0 63% 31%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family:
+      "Segoe UI",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Inter",
+      system-ui,
+      sans-serif;
+    font-feature-settings:
+      "kern" 1,
+      "liga" 1,
+      "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}

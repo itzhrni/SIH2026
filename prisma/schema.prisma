@@ -1,0 +1,266 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  STUDENT
+  INDUSTRY
+  ACADEMICIAN
+  INSTITUTIONAL_ADMIN
+}
+
+enum OpportunityType {
+  INTERNSHIP
+  JOB
+  FDP
+  FACULTY_INTERNSHIP
+  RESEARCH_PROJECT
+  CONSULTANCY
+  LEARNING_PROGRAM
+}
+
+enum ApplicationStatus {
+  APPLIED
+  UNDER_REVIEW
+  SHORTLISTED
+  INTERVIEW_SCHEDULED
+  SELECTED
+  NOT_SELECTED
+}
+
+enum PlacementStatus {
+  APPLIED
+  REVIEWED
+  SHORTLISTED
+  INTERVIEW_SCHEDULED
+  OFFER_EXTENDED
+  JOINED
+  REJECTED
+}
+
+enum GapSeverity {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         Role
+  institution  String?
+  department   String?
+  expertise    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  skillProfile         SkillProfile?
+  assessmentSessions   AssessmentSession[]
+  applications         Application[]
+  postings             Opportunity[]          @relation("PostedBy")
+  learningPrograms     LearningProgram[]      @relation("LearningPrograms")
+  studentInternships   InternshipRecord[]      @relation("StudentInternships")
+  mentorInternships    InternshipRecord[]      @relation("MentorInternships")
+  accounts             Account[]
+  sessions             Session[]
+
+  @@index([role])
+  @@index([email])
+  @@map("users")
+}
+
+model SkillProfile {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  domainScores Json     @default("{}")
+  badges       Json     @default("{}")
+  softSkillScore Float?
+  updatedAt    DateTime @updatedAt
+
+  scoreHistory SkillScoreHistory[]
+
+  @@map("skill_profiles")
+}
+
+model SkillScoreHistory {
+  id         String       @id @default(cuid())
+  profileId  String
+  profile    SkillProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  domain     String
+  score      Float
+  sessionId  String
+  recordedAt DateTime     @default(now())
+
+  @@index([profileId, domain])
+  @@index([profileId, recordedAt])
+  @@map("skill_score_history")
+}
+
+model AssessmentSession {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  domain        String
+  status        String
+  currentNodeId String?
+  turnIndex     Int      @default(0)
+  graphSnapshot Json
+  nodeResults   Json     @default("{}")
+  createdAt     DateTime @default(now())
+  completedAt   DateTime?
+
+  gapReport GapReport?
+
+  @@index([userId, status])
+  @@index([userId, domain])
+  @@map("assessment_sessions")
+}
+
+model GapReport {
+  id           String            @id @default(cuid())
+  sessionId    String            @unique
+  session      AssessmentSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  userId       String
+  domain       String
+  strongNodes  Json              @default("[]")
+  partialNodes Json              @default("[]")
+  weakNodes    Json              @default("[]")
+  overallScore Float
+  generatedAt  DateTime          @default(now())
+
+  @@index([userId])
+  @@index([userId, domain])
+  @@map("gap_reports")
+}
+
+model Opportunity {
+  id                String          @id @default(cuid())
+  postedById        String
+  postedBy          User            @relation("PostedBy", fields: [postedById], references: [id], onDelete: Cascade)
+  type              OpportunityType
+  title             String
+  description       String          @db.Text
+  requiredSkills    Json            @default("[]")
+  eligibilityCriteria Json          @default("{}")
+  location          String?
+  duration          String?
+  stipendRange      String?
+  deadline          DateTime
+  isActive          Boolean         @default(true)
+  skillsExtracted   Json?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  applications Application[]
+
+  @@index([type, isActive])
+  @@index([postedById])
+  @@index([deadline])
+  @@map("opportunities")
+}
+
+model LearningProgram {
+  id          String   @id @default(cuid())
+  postedById  String
+  postedBy    User     @relation("LearningPrograms", fields: [postedById], references: [id], onDelete: Cascade)
+  title       String
+  format      String   // e.g. "Online Course", "Bootcamp", "Self-paced"
+  skills      Json     // array of skill names: ["python", "django"]
+  duration    String   // e.g. "6 weeks", "3 months"
+  enrollmentLink String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive])
+  @@index([postedById])
+  @@map("learning_programs")
+}
+
+model Application {
+  id            String            @id @default(cuid())
+  userId        String
+  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  opportunityId String
+  opportunity   Opportunity       @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  status        ApplicationStatus @default(APPLIED)
+  placementStatus PlacementStatus?
+  matchScoreAtApply Float
+  notes         String?           @db.Text
+  appliedAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@unique([userId, opportunityId])
+  @@index([opportunityId, status])
+  @@index([userId, status])
+  @@map("applications")
+}
+
+model InternshipRecord {
+  id           String  @id @default(cuid())
+  studentId    String
+  student      User    @relation("StudentInternships", fields: [studentId], references: [id], onDelete: Cascade)
+  mentorId     String?
+  mentor       User?   @relation("MentorInternships", fields: [mentorId], references: [id], onDelete: SetNull)
+  companyName  String
+  role         String
+  startDate    DateTime
+  endDate      DateTime?
+  isComplete   Boolean  @default(false)
+  progressLogs Json     @default("[]")
+  mentorFeedback Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([mentorId])
+  @@map("internship_records")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+

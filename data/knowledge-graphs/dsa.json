@@ -1,0 +1,98 @@
+{
+  "domain": "dsa",
+  "displayName": "Data Structures & Algorithms",
+  "version": "1.0.0",
+  "nodes": [
+    {
+      "id": "arrays",
+      "label": "Arrays & Strings",
+      "topicId": "linear-structures",
+      "dependencies": [],
+      "rubric": {
+        "correctness": "Can the student implement array operations (traversal, insertion, deletion, two-pointer) correctly?",
+        "depth": "Does the student understand cache locality, amortised growth, and contiguous memory trade-offs?",
+        "tradeoffAwareness": "Can the student compare arrays vs linked lists for specific use cases?",
+        "realWorldApplicability": "Can the student apply array patterns (sliding window, prefix sums) to realistic problems?"
+      },
+      "importance": 1.0
+    },
+    {
+      "id": "hash-tables",
+      "label": "Hash Tables & Hash Maps",
+      "topicId": "lookup-structures",
+      "dependencies": ["arrays"],
+      "rubric": {
+        "correctness": "Can the student explain hashing, collision resolution (chaining, open addressing), and load factor?",
+        "depth": "Does the student understand amortised O(1) operations and worst-case degradation?",
+        "tradeoffAwareness": "When would the student prefer a hash map over a sorted map or balanced BST?",
+        "realWorldApplicability": "Can the student use hash maps to solve frequency counting, anagram detection, or LRU cache problems?"
+      },
+      "importance": 0.95
+    },
+    {
+      "id": "binary-trees",
+      "label": "Binary Trees & BSTs",
+      "topicId": "tree-structures",
+      "dependencies": ["arrays"],
+      "rubric": {
+        "correctness": "Can the student implement DFS (in/pre/post order), BFS, and BST insert/search/delete?",
+        "depth": "Does the student understand height-balance implications (AVL, Red-Black trees)?",
+        "tradeoffAwareness": "When is a BST preferred over a hash table, and vice versa?",
+        "realWorldApplicability": "Can the student apply tree traversal to expression evaluation, file system traversal, or DOM parsing?"
+      },
+      "importance": 0.9
+    },
+    {
+      "id": "heaps",
+      "label": "Heaps & Priority Queues",
+      "topicId": "tree-structures",
+      "dependencies": ["binary-trees"],
+      "rubric": {
+        "correctness": "Can the student implement heapify, insert, and extract-min/max on a binary heap?",
+        "depth": "Does the student understand the heap property, index arithmetic, and heap sort?",
+        "tradeoffAwareness": "When is a heap preferred over a sorted array or BST for priority operations?",
+        "realWorldApplicability": "Can the student apply heaps to top-K problems, Dijkstra's algorithm, or task scheduling?"
+      },
+      "importance": 0.8
+    },
+    {
+      "id": "graphs",
+      "label": "Graphs & Graph Traversal",
+      "topicId": "graph-structures",
+      "dependencies": ["binary-trees", "hash-tables"],
+      "rubric": {
+        "correctness": "Can the student implement BFS, DFS, and detect cycles in directed/undirected graphs?",
+        "depth": "Does the student understand adjacency list vs matrix, strongly connected components, topological sort?",
+        "tradeoffAwareness": "When is BFS preferred over DFS? When to use adjacency matrix vs list?",
+        "realWorldApplicability": "Can the student model social networks, dependency resolution, or shortest-path problems as graphs?"
+      },
+      "importance": 0.9
+    },
+    {
+      "id": "dynamic-programming",
+      "label": "Dynamic Programming",
+      "topicId": "algorithmic-paradigms",
+      "dependencies": ["arrays", "graphs"],
+      "rubric": {
+        "correctness": "Can the student identify overlapping subproblems, define recurrences, and implement memoisation or tabulation?",
+        "depth": "Does the student understand state space design, space optimisation, and bitmask DP?",
+        "tradeoffAwareness": "When to use top-down memoisation vs bottom-up tabulation? How does state size affect complexity?",
+        "realWorldApplicability": "Can the student apply DP to knapsack, LCS, edit distance, or financial optimisation scenarios?"
+      },
+      "importance": 0.95
+    },
+    {
+      "id": "sorting-searching",
+      "label": "Sorting & Searching",
+      "topicId": "algorithmic-paradigms",
+      "dependencies": ["arrays"],
+      "rubric": {
+        "correctness": "Can the student implement merge sort, quicksort, and binary search correctly?",
+        "depth": "Does the student understand in-place vs out-of-place sorting, stability, and comparison lower bounds?",
+        "tradeoffAwareness": "When is counting sort or radix sort preferred? How does pivot selection affect quicksort performance?",
+        "realWorldApplicability": "Can the student apply binary search to rotated arrays, answer-space search, or database index lookups?"
+      },
+      "importance": 0.85
+    }
+  ]
+}

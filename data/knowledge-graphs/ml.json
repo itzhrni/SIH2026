@@ -1,0 +1,72 @@
+{
+  "domain": "ml",
+  "displayName": "Machine Learning & Data Science",
+  "version": "1.0.0",
+  "nodes": [
+    {
+      "id": "supervised-learning",
+      "label": "Supervised Learning",
+      "topicId": "ml-fundamentals",
+      "dependencies": [],
+      "rubric": {
+        "correctness": "Can the student explain classification vs regression, loss functions, gradient descent, and model training loops?",
+        "depth": "Does the student understand bias-variance trade-off, regularisation (L1/L2), and generalisation theory?",
+        "tradeoffAwareness": "When to use linear models vs tree-based models vs neural networks for tabular data?",
+        "realWorldApplicability": "Can the student design a supervised pipeline (feature engineering → training → evaluation → deployment) for customer churn prediction?"
+      },
+      "importance": 1.0
+    },
+    {
+      "id": "model-evaluation",
+      "label": "Model Evaluation Metrics",
+      "topicId": "ml-fundamentals",
+      "dependencies": ["supervised-learning"],
+      "rubric": {
+        "correctness": "Can the student compute and interpret accuracy, precision, recall, F1, ROC-AUC, and RMSE?",
+        "depth": "Does the student understand class imbalance, calibration, cross-validation, and statistical significance of results?",
+        "tradeoffAwareness": "When to optimise precision vs recall? Why is accuracy misleading on imbalanced datasets?",
+        "realWorldApplicability": "Can the student select the right evaluation metric for a medical diagnosis model vs a spam filter vs a ranking system?"
+      },
+      "importance": 0.95
+    },
+    {
+      "id": "feature-engineering",
+      "label": "Feature Engineering",
+      "topicId": "data-preparation",
+      "dependencies": ["supervised-learning"],
+      "rubric": {
+        "correctness": "Can the student apply one-hot encoding, normalisation, imputation, and target encoding correctly?",
+        "depth": "Does the student understand feature selection methods (mutual information, SHAP), dimensionality reduction (PCA), and leakage?",
+        "tradeoffAwareness": "When to use tree-based models that handle raw categoricals vs models requiring encoded features?",
+        "realWorldApplicability": "Can the student engineer features from raw transaction logs to improve fraud detection recall by 15%?"
+      },
+      "importance": 0.9
+    },
+    {
+      "id": "neural-networks",
+      "label": "Neural Networks & Deep Learning",
+      "topicId": "deep-learning",
+      "dependencies": ["supervised-learning", "feature-engineering"],
+      "rubric": {
+        "correctness": "Can the student explain forward pass, backpropagation, activation functions, and optimisers (SGD, Adam)?",
+        "depth": "Does the student understand vanishing gradients, batch normalisation, dropout, and architecture choices (CNN, RNN, Transformer)?",
+        "tradeoffAwareness": "When is a deep neural network justified vs a gradient-boosted tree? Data vs model complexity trade-offs?",
+        "realWorldApplicability": "Can the student design a CNN for image classification or a Transformer fine-tuning pipeline for NLP tasks?"
+      },
+      "importance": 0.85
+    },
+    {
+      "id": "unsupervised-learning",
+      "label": "Unsupervised Learning & Clustering",
+      "topicId": "ml-fundamentals",
+      "dependencies": ["supervised-learning"],
+      "rubric": {
+        "correctness": "Can the student explain k-means, hierarchical clustering, DBSCAN, and dimensionality reduction (t-SNE, UMAP)?",
+        "depth": "Does the student understand inertia, silhouette score, and how to choose the number of clusters (elbow method)?",
+        "tradeoffAwareness": "When is unsupervised learning appropriate vs semi-supervised vs self-supervised learning?",
+        "realWorldApplicability": "Can the student apply clustering to customer segmentation or anomaly detection without labelled data?"
+      },
+      "importance": 0.8
+    }
+  ]
+}
