@@ -33,6 +33,11 @@ export function PlacementPipeline({
   const [editingNotesId, setEditingNotesId] = useState<string | null>(null);
   const [notesDraft, setNotesDraft] = useState<string>("");
   const [isUpdating, setIsUpdating] = useState<string | null>(null);
+  const [actionFeedback, setActionFeedback] = useState<{
+    id: string;
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
   // Filter applicants by opportunity
   const filteredApplicants = applicants.filter((a) => {
@@ -100,35 +105,60 @@ export function PlacementPipeline({
         if (editingNotesId === applicantId) {
           setEditingNotesId(null);
         }
+        setActionFeedback({
+          id: applicantId,
+          type: "success",
+          message: "Candidate stage updated successfully.",
+        });
+        setTimeout(() => setActionFeedback(null), 3000);
+      } else {
+        setActionFeedback({
+          id: applicantId,
+          type: "error",
+          message: json.error?.message || "Failed to update candidate status.",
+        });
       }
     } catch (err) {
       console.error("Failed to update status", err);
+      setActionFeedback({
+        id: applicantId,
+        type: "error",
+        message: "Network error. Failed to update status.",
+      });
     } finally {
       setIsUpdating(null);
     }
   };
 
+  // Compute stage counts scoped to the currently selected opportunity
+  const oppScopedApplicants = applicants.filter((a) => {
+    return (
+      selectedOpportunityId === "ALL" ||
+      a.opportunityId === selectedOpportunityId
+    );
+  });
+
   const stageCounts = {
-    all: applicants.length,
-    applied: applicants.filter(
+    all: oppScopedApplicants.length,
+    applied: oppScopedApplicants.filter(
       (a) => a.status === "APPLIED" && !a.placementStatus,
     ).length,
-    underReview: applicants.filter(
+    underReview: oppScopedApplicants.filter(
       (a) => a.status === "UNDER_REVIEW" || a.placementStatus === "REVIEWED",
     ).length,
-    shortlisted: applicants.filter(
+    shortlisted: oppScopedApplicants.filter(
       (a) => a.status === "SHORTLISTED" || a.placementStatus === "SHORTLISTED",
     ).length,
-    interview: applicants.filter(
+    interview: oppScopedApplicants.filter(
       (a) =>
         a.status === "INTERVIEW_SCHEDULED" ||
         a.placementStatus === "INTERVIEW_SCHEDULED",
     ).length,
-    offer: applicants.filter(
+    offer: oppScopedApplicants.filter(
       (a) => a.status === "SELECTED" || a.placementStatus === "OFFER_EXTENDED",
     ).length,
-    joined: applicants.filter((a) => a.placementStatus === "JOINED").length,
-    rejected: applicants.filter(
+    joined: oppScopedApplicants.filter((a) => a.placementStatus === "JOINED").length,
+    rejected: oppScopedApplicants.filter(
       (a) => a.status === "NOT_SELECTED" || a.placementStatus === "REJECTED",
     ).length,
   };
@@ -359,6 +389,19 @@ export function PlacementPipeline({
                   </p>
                 )}
               </div>
+
+              {/* Action Feedback Notification */}
+              {actionFeedback && actionFeedback.id === applicant.id && (
+                <div
+                  className={`rounded-sm px-2.5 py-1 text-xs font-medium border ${
+                    actionFeedback.type === "success"
+                      ? "bg-success-bg text-success border-success-border"
+                      : "bg-destructive-bg text-destructive border-destructive-border"
+                  }`}
+                >
+                  {actionFeedback.message}
+                </div>
+              )}
 
               {/* Pipeline Progression Action Buttons */}
               <div className="flex flex-wrap items-center justify-end gap-2 pt-2 border-t border-border">

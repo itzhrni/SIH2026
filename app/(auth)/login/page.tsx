@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,10 +21,10 @@ import {
   ArrowRight,
   Loader2,
   ShieldCheck,
+  BookOpen,
 } from "lucide-react";
 
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl =
     searchParams.get("callbackUrl") || "/industry/recruiter-dashboard";
@@ -35,50 +34,96 @@ function LoginForm() {
   const [loadingRole, setLoadingRole] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const ROLE_PATHS: Record<string, string> = {
+    STUDENT: "/student/dashboard",
+    INDUSTRY: "/industry/recruiter-dashboard",
+    ACADEMICIAN: "/acad/opportunity-feed",
+    INSTITUTIONAL_ADMIN: "/admin/swan-dashboard",
+  };
+
+  const ROLE_EMAILS: Record<string, string> = {
+    "student.aarav@skillledger.dev": "STUDENT",
+    "student.priya@skillledger.dev": "STUDENT",
+    "student.rohan@skillledger.dev": "STUDENT",
+    "recruiter.vikram@techcorp.dev": "INDUSTRY",
+    "prof.sharma@aims.edu": "ACADEMICIAN",
+    "admin@swan.gov.in": "INSTITUTIONAL_ADMIN",
+  };
+
+  async function resolveCallbackUrl(targetEmail: string, customCallbackUrl: string) {
+    const role = ROLE_EMAILS[targetEmail] || null;
+    if (role && ROLE_PATHS[role]) {
+      return ROLE_PATHS[role];
+    }
+    if (customCallbackUrl && !customCallbackUrl.includes("/login")) {
+      return customCallbackUrl;
+    }
+    return "/student/dashboard";
+  }
+
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setLoadingRole("custom");
 
-    const res = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
+    const resolvedUrl = await resolveCallbackUrl(email, callbackUrl);
 
-    if (res?.error) {
-      setError("Invalid email or password. Please verify credentials.");
+    const res = await fetch("/api/auth/csrf");
+    const { csrfToken } = await res.json();
+
+    try {
+      const authRes = await fetch(`/api/auth/callback/credentials?callbackUrl=${encodeURIComponent(resolvedUrl)}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          email,
+          password,
+          csrfToken,
+          callbackUrl: resolvedUrl,
+        }),
+      });
+
+      if (authRes.url && authRes.url.includes("error=")) {
+        setError("Invalid email or password. Please try again.");
+        setLoadingRole(null);
+        return;
+      }
+
+      window.location.href = resolvedUrl;
+    } catch {
+      setError("Failed to sign in. Please check your connection.");
       setLoadingRole(null);
-    } else {
-      window.location.href = callbackUrl;
     }
   }
 
   async function handleQuickLogin(
     roleEmail: string,
     rolePass: string,
-    defaultPath: string,
     roleId: string,
+    loginCallbackUrl: string,
   ) {
     setError(null);
     setLoadingRole(roleId);
 
-    const res = await signIn("credentials", {
-      email: roleEmail,
-      password: rolePass,
-      redirect: false,
+    const res = await fetch("/api/auth/csrf");
+    const { csrfToken } = await res.json();
+
+    await fetch(`/api/auth/callback/credentials?callbackUrl=${encodeURIComponent(loginCallbackUrl)}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        email: roleEmail,
+        password: rolePass,
+        csrfToken,
+        callbackUrl: loginCallbackUrl,
+      }),
     });
 
-    if (res?.error) {
-      setError("Failed to authenticate with demo credentials: " + res.error);
-      setLoadingRole(null);
-    } else {
-      const destination =
-        callbackUrl && !callbackUrl.includes("/login")
-          ? callbackUrl
-          : defaultPath;
-      window.location.href = destination;
-    }
+    window.location.href = loginCallbackUrl;
   }
 
   return (
@@ -116,8 +161,8 @@ function LoginForm() {
                 handleQuickLogin(
                   "recruiter.vikram@techcorp.dev",
                   "Demo@1234",
-                  "/industry/recruiter-dashboard",
                   "recruiter",
+                  "/industry/recruiter-dashboard",
                 )
               }
               disabled={loadingRole !== null}
@@ -135,14 +180,38 @@ function LoginForm() {
 
             <Button
               type="button"
+              className="w-full justify-between"
+              onClick={() =>
+                handleQuickLogin(
+                  "prof.sharma@aims.edu",
+                  "Demo@1234",
+                  "academician",
+                  "/acad/opportunity-feed",
+                )
+              }
+              disabled={loadingRole !== null}
+            >
+              <span className="flex items-center gap-2 font-medium">
+                <BookOpen className="w-4 h-4" />
+                Dr. Ananya Sharma (Academician)
+              </span>
+              {loadingRole === "academician" ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <ArrowRight className="w-4 h-4" />
+              )}
+            </Button>
+
+            <Button
+              type="button"
               variant="outline"
               className="w-full justify-between bg-card"
               onClick={() =>
                 handleQuickLogin(
                   "student.aarav@skillledger.dev",
                   "Demo@1234",
-                  "/student/dashboard",
                   "student",
+                  "/student/dashboard",
                 )
               }
               disabled={loadingRole !== null}
@@ -152,6 +221,31 @@ function LoginForm() {
                 Aarav Sharma (Demo Student Candidate)
               </span>
               {loadingRole === "student" ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <ArrowRight className="w-4 h-4 text-foreground-muted" />
+              )}
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full justify-between bg-card"
+              onClick={() =>
+                handleQuickLogin(
+                  "admin@swan.gov.in",
+                  "Demo@1234",
+                  "admin",
+                  "/admin/swan-dashboard",
+                )
+              }
+              disabled={loadingRole !== null}
+            >
+              <span className="flex items-center gap-2 text-foreground-muted">
+                <ShieldCheck className="w-4 h-4" />
+                SWAN Institutional Admin (Admin)
+              </span>
+              {loadingRole === "admin" ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <ArrowRight className="w-4 h-4 text-foreground-muted" />

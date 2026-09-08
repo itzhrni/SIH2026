@@ -147,7 +147,7 @@ export function GapReport({ report }: GapReportProps) {
 
       {/* Action Footer */}
       <div className="flex items-center justify-between pt-2">
-        <Link href="/dashboard">
+        <Link href="/student/dashboard">
           <Button
             variant="outline"
             className="h-9 px-4 text-sm border-border hover:bg-background-muted"
@@ -155,7 +155,7 @@ export function GapReport({ report }: GapReportProps) {
             Back to Dashboard
           </Button>
         </Link>
-        <Link href="/portfolio">
+        <Link href="/student/portfolio">
           <Button className="h-9 gap-1.5 bg-primary px-4 text-sm text-white hover:bg-primary-hover">
             View Live Portfolio
             <ArrowRight className="h-3.5 w-3.5" />

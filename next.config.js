@@ -17,6 +17,7 @@ requiredEnvVars.forEach((key) => {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
+    serverComponentsExternalPackages: ["@prisma/client", "prisma"],
     serverComponentsExternalPackages: ["@prisma/client", "prisma", "bcryptjs"],
   },
   images: {

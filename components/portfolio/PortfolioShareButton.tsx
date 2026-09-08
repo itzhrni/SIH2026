@@ -16,7 +16,7 @@ export function PortfolioShareButton({ studentId }: PortfolioShareButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
-    const url = `${window.location.origin}/portfolio?studentId=${studentId}`;
+    const url = `${window.location.origin}/student/portfolio?studentId=${studentId}`;
     navigator.clipboard.writeText(url);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);

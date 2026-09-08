@@ -1,3 +1,4 @@
+import { LogOut } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 
@@ -58,8 +59,15 @@ export function AppShell({
         </nav>
 
         {/* Footer */}
-        <div className="border-t border-border px-4 py-3">
+        <div className="border-t border-border px-4 py-3 flex items-center justify-between">
           <p className="text-[11px] text-muted-foreground">{title}</p>
+          <Link
+            href="/login"
+            className="flex items-center gap-1 text-[11px] text-muted-foreground transition-colors duration-150 hover:text-destructive"
+          >
+            <LogOut className="h-3 w-3" />
+            <span>Sign out</span>
+          </Link>
         </div>
       </aside>
 

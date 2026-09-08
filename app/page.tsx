@@ -17,6 +17,7 @@ import {
   Award,
   Layers,
   CheckCircle2,
+  BookOpen,
 } from "lucide-react";
 
 export default function Home() {
@@ -224,6 +225,34 @@ export default function Home() {
                 Email:{" "}
                 <code className="text-primary font-mono">
                   student.aarav@skillledger.dev
+                </code>
+              </div>
+              <div>
+                Password: <code className="font-mono">Demo@1234</code>
+              </div>
+            </div>
+            <div className="p-2 rounded bg-background-subtle border border-border">
+              <div className="font-medium text-foreground">
+                📚 Dr. Ananya Sharma (Academician)
+              </div>
+              <div>
+                Email:{" "}
+                <code className="text-primary font-mono">
+                  prof.sharma@aims.edu
+                </code>
+              </div>
+              <div>
+                Password: <code className="font-mono">Demo@1234</code>
+              </div>
+            </div>
+            <div className="p-2 rounded bg-background-subtle border border-border">
+              <div className="font-medium text-foreground">
+                🏛️ SWAN Admin
+              </div>
+              <div>
+                Email:{" "}
+                <code className="text-primary font-mono">
+                  admin@swan.gov.in
                 </code>
               </div>
               <div>

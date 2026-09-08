@@ -143,7 +143,7 @@ export function PostOpportunityForm() {
 
       setSuccessMsg("Opportunity published successfully! Redirecting...");
       setTimeout(() => {
-        router.push("/industry/opportunities");
+        router.push("/industry/my-postings");
         router.refresh();
       }, 1200);
     } catch (err) {

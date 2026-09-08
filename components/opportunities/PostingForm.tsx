@@ -1,4 +1,4 @@
-﻿// components/opportunities/PostingForm.tsx
+// components/opportunities/PostingForm.tsx
 // RULE FE-01: "use client" — uses React Hook Form + state
 "use client";
 
@@ -115,7 +115,7 @@ export function PostingForm({ type, pageTitle }: PostingFormProps) {
       return;
     }
 
-    router.push("/industry/dashboard");
+    router.push("/industry/recruiter-dashboard");
     router.refresh();
   };
 

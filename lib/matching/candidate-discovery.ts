@@ -56,7 +56,7 @@ export async function searchCandidates(
         },
       },
       assessmentSessions: {
-        where: { status: "COMPLETED" },
+        where: { status: { in: ["completed", "COMPLETED"] } },
         select: {
           id: true,
           domain: true,
