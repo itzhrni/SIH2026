@@ -22,7 +22,9 @@ import {
   ArrowRight,
   Loader2,
   ShieldCheck,
+  School,
 } from "lucide-react";
+
 
 function LoginForm() {
   const router = useRouter();
@@ -198,8 +200,34 @@ function LoginForm() {
                 <ArrowRight className="w-4 h-4 text-foreground-muted" />
               )}
             </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full justify-between bg-card hover:bg-blue-500/10 hover:border-blue-500/30 transition-colors"
+              onClick={() =>
+                handleQuickLogin(
+                  "admin@swan.gov.in",
+                  "Demo@1234",
+                  "/admin/swan-dashboard",
+                  "admin",
+                )
+              }
+              disabled={loadingRole !== null}
+            >
+              <span className="flex items-center gap-2 text-foreground font-medium">
+                <School className="w-4 h-4 text-blue-400" />
+                Institution / College Admin (SWAN Analytics)
+              </span>
+              {loadingRole === "admin" ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <ArrowRight className="w-4 h-4 text-blue-400" />
+              )}
+            </Button>
           </CardContent>
         </Card>
+
 
         {/* Manual Credentials Sign In */}
         <Card>
