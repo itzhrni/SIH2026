@@ -1,19 +1,22 @@
-import { AppShell } from "@/components/layout/AppShell";
-import { LayoutDashboard } from "lucide-react";
-import type { NavItem } from "@/components/layout/AppShell";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import { nextAuthConfig } from "@/lib/auth/next-auth-config";
+import { AdminAppShell } from "@/components/admin/AdminAppShell";
 
-const navItems: NavItem[] = [
-  { label: "Dashboard", href: "/admin/swan-dashboard", icon: LayoutDashboard },
-];
-
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getServerSession(nextAuthConfig);
+  if (!session || session.user.role !== "INSTITUTIONAL_ADMIN") {
+    redirect("/login");
+  }
+
   return (
-    <AppShell title="Institutional Admin" subtitle="Admin" navItems={navItems}>
+    <AdminAppShell user={session.user}>
       {children}
-    </AppShell>
+    </AdminAppShell>
   );
 }
+

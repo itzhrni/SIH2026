@@ -474,3 +474,277 @@ export interface RespondResult {
   isComplete: boolean;
   reportId: string | null;
 }
+
+// ─── Institution Analytics & Decision Support Types ─────────────────────────
+
+export interface InstitutionalOverviewStats {
+  studentsAssessed: number;
+  skillsVerified: number;
+  placementReadinessPercent: number;
+  criticalSkillGapsCount: number;
+  totalEnrolledStudents: number;
+  totalOpportunities: number;
+  topGaps: IndustryDemandComparison[];
+  readinessDistribution: {
+    ready: number;
+    partiallyReady: number;
+    needsIntervention: number;
+  };
+  actionPlan: ActionPlanItem[];
+  totalStudentsAssessed?: number;
+  averageReadinessIndex?: number;
+  activeIndustryOpportunities?: number;
+  placementRate?: number;
+  activeCourseInterventions?: number;
+  priorityActionPlans?: {
+    id: string;
+    title: string;
+    category: string;
+    priority: "HIGH" | "MEDIUM" | "LOW";
+    description: string;
+    targetAudience: string;
+    expectedOutcome: string;
+  }[];
+}
+
+export interface ReadinessTierBreakdown {
+  department?: string;
+  tier?: string;
+  studentCount?: number;
+  percentage?: number;
+  color?: string;
+  totalAssessed?: number;
+  readyCount?: number;
+  partiallyReadyCount?: number;
+  needsInterventionCount?: number;
+  readinessPercentage?: number;
+  topStrength?: string;
+  topGap?: string;
+}
+
+export interface StudentReadinessData {
+  overallReadiness: {
+    ready: number;
+    partiallyReady: number;
+    needsIntervention: number;
+  };
+  departments: ReadinessTierBreakdown[];
+  batchComparisons: {
+    batch: string;
+    readinessPercentage: number;
+    assessedCount: number;
+  }[];
+  totalStudents?: number;
+  tierBreakdown: {
+    tier: string;
+    studentCount: number;
+    percentage: number;
+    color: string;
+  }[];
+  topReadyStudents: {
+    id: string;
+    name: string;
+    department: string;
+    targetRole: string;
+    readinessScore: number;
+    topSkills: string[];
+  }[];
+  needingAttention: {
+    id: string;
+    name: string;
+    department: string;
+    readinessScore: number;
+    missingSkills: string[];
+    recommendedCourse: string;
+  }[];
+  departmentBreakdown: {
+    department: string;
+    studentCount: number;
+    averageScore: number;
+    tier1Percent: number;
+  }[];
+}
+
+export interface SkillHealthItem {
+  skill: string;
+  category: string;
+  averageScore: number;
+  studentCount?: number;
+  verifiedCount: number;
+  status: "STRONG" | "MODERATE" | "WEAK" | "HEALTHY";
+  growthRate?: number;
+  growthPercent: number;
+  trend: "UP" | "DOWN" | "STABLE";
+}
+
+export interface IndustryDemandComparison {
+  skill: string;
+  category: string;
+  demandPercent: number;
+  supplyPercent: number;
+  gap: number;
+  gapPercent: number;
+  severity: "CRITICAL" | "MODERATE" | "MEDIUM" | "LOW" | "ALIGNED" | "SURPLUS";
+  affectedStudents: number;
+  demandingPostingsCount: number;
+  recommendedCourseId?: string;
+  suggestedAction: string;
+}
+
+export interface SkillGapMatrixRow {
+  skill: string;
+  category: string;
+  demandPercent: number;
+  departmentScores?: Record<string, { score: number; gap: number; severity: "CRITICAL" | "MEDIUM" | "LOW" }>;
+  scoresByDepartment: Record<string, number>;
+  institutionAverage: number;
+  affectedStudentsTotal: number;
+  recommendedIntervention: string;
+}
+
+export interface CurriculumIntelligenceItem {
+  topic?: string;
+  domain?: string;
+  skill: string;
+  category: string;
+  status?: "COVERED" | "PARTIALLY_COVERED" | "MISSING_EMERGING" | "COVERED" | "PARTIAL" | "MISSING";
+  coverageStatus: "COVERED" | "PARTIAL" | "MISSING";
+  industryDemandPercent: number;
+  currentCurriculumCoverage?: string;
+  currentCourse?: string | null;
+  semester?: number | null;
+  recommendedAction: string;
+  targetDepartments?: string[];
+}
+
+export interface CourseRecommendation {
+  id: string;
+  rank: number;
+  courseTitle?: string;
+  title: string;
+  targetSkill?: string;
+  skill: string;
+  domain: string;
+  institutionalGap: number;
+  industryDemandLevel: "HIGH" | "MEDIUM" | "LOW";
+  industryDemandPercent: number;
+  currentCapabilityPercent: number;
+  studentsAffected?: number;
+  targetStudentsCount: number;
+  recommendedCohort?: string;
+  targetDepartment: string;
+  recommendedDuration?: string;
+  durationWeeks: number;
+  prerequisites: string[];
+  priority: "HIGH" | "MEDIUM" | "LOW" | "CRITICAL";
+  urgency: "HIGH" | "MEDIUM" | "LOW" | "CRITICAL";
+  recommendedIntervention: string;
+  whyThisCourse: string;
+  expectedOutcome: string;
+  rolesAddressed: string[];
+  inPortalCourseId?: string;
+  courseId: string;
+  estimatedReadinessGain: number;
+  modules: string[];
+}
+
+export interface PlacementAnalyticsData {
+  funnel: {
+    totalStudents: number;
+    assessedStudents: number;
+    placementReady: number;
+    applicationsSubmitted: number;
+    shortlisted: number;
+    offersExtended: number;
+    joined: number;
+  };
+  placementRate: number;
+  totalPlaced: number;
+  totalEligibleStudents: number;
+  totalOffers: number;
+  averageSalary: string;
+  highestSalary: string;
+  funnelStages: {
+    stage: string;
+    count: number;
+    conversion: string;
+  }[];
+  topRejectionReasons: {
+    skill: string;
+    rejectionsCount: number;
+    percentage: number;
+  }[];
+  topRecruiters: {
+    name: string;
+    hiresCount: number;
+    averagePackage: string;
+  }[];
+  topGapsAmongUnsuccessful: {
+    skill: string;
+    gapFrequencyPercent: number;
+    affectedCandidatesCount: number;
+    recommendedCourse: string;
+  }[];
+  departmentPlacementStats: {
+    department: string;
+    assessed: number;
+    placed: number;
+    placementRate: number;
+  }[];
+}
+
+export interface InternshipAnalyticsData {
+  activeInternshipsCount: number;
+  activeInternships: number;
+  completedInternshipsCount: number;
+  ppoConversionRate: number;
+  averageMentorRating: number;
+  totalCompaniesEngaged: number;
+  topRequestedSkills: {
+    skill: string;
+    count: number;
+    requestsCount: number;
+  }[];
+  companyCollaborations: {
+    companyName: string;
+    activeCount: number;
+    verifiedCount: number;
+  }[];
+  departmentBreakdown: {
+    department: string;
+    internsCount: number;
+    completionRate: number;
+  }[];
+  recentEngagements: {
+    id: string;
+    studentName: string;
+    company: string;
+    role: string;
+    stipend: string;
+    mentorRating: number;
+    status: string;
+  }[];
+}
+
+export interface ActionPlanItem {
+  id: string;
+  priorityRank: string;
+  title: string;
+  targetSkill: string;
+  affectedStudents: number;
+  reason: string;
+  suggestedIntervention: string;
+  targetDepartment: string;
+  status: "NOT_STARTED" | "SCHEDULED" | "IN_PROGRESS";
+}
+
+export interface InstitutionalReportSpec {
+  id: string;
+  title: string;
+  name: string;
+  description: string;
+  category: "SKILLS" | "DEMAND" | "CURRICULUM" | "PLACEMENT" | "ACCREDITATION" | string;
+  lastGenerated: string;
+  downloadFormat: "PDF" | "CSV" | "JSON" | string;
+}
+
