@@ -24,6 +24,7 @@ const ROLE_ROUTES: Record<string, string> = {
   "/admin": "INSTITUTIONAL_ADMIN",
   "/swan-dashboard": "INSTITUTIONAL_ADMIN",
   "/acad": "ACADEMICIAN",
+  "/acad-profile": "ACADEMICIAN",
   "/opportunity-feed": "ACADEMICIAN",
   "/student-applications": "ACADEMICIAN",
 };

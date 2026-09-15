@@ -39,9 +39,12 @@ const nextConfig = {
 
       // Student Routes
       { source: "/student/dashboard", destination: "/dashboard" },
+      { source: "/student/courses/:path*", destination: "/courses/:path*" },
+      { source: "/student/courses", destination: "/courses" },
       { source: "/student/assess/:path*", destination: "/assess/:path*" },
       { source: "/student/assess", destination: "/assess" },
       { source: "/student/portfolio", destination: "/portfolio" },
+      { source: "/student/profile", destination: "/profile" },
       { source: "/student/opportunities", destination: "/opportunities" },
       { source: "/student/applications", destination: "/applications" },
       { source: "/student/learning-programs", destination: "/learning-programs" },
@@ -55,7 +58,8 @@ const nextConfig = {
       // Acad Routes
       { source: "/acad/opportunity-feed", destination: "/opportunity-feed" },
       { source: "/acad/student-applications", destination: "/student-applications" },
-      { source: "/acad/profile", destination: "/profile" },
+      { source: "/acad/profile", destination: "/acad-profile" },
+      { source: "/acad/acad-profile", destination: "/acad-profile" },
       { source: "/acad", destination: "/opportunity-feed" },
     ];
   },
