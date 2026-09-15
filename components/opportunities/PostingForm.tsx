@@ -1,4 +1,4 @@
-﻿// components/opportunities/PostingForm.tsx
+// components/opportunities/PostingForm.tsx
 // RULE FE-01: "use client" — uses React Hook Form + state
 "use client";
 
@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PlusCircle, Trash2, Loader2 } from "lucide-react";
+import { PlusCircle, Trash2, Loader2, Sparkles, Building2, MapPin, Calendar } from "lucide-react";
 import type { OpportunityType } from "@prisma/client";
 
 // Domains matching KnowledgeGraph.domain values
@@ -115,47 +115,54 @@ export function PostingForm({ type, pageTitle }: PostingFormProps) {
       return;
     }
 
-    router.push("/industry/dashboard");
+    router.push("/industry/my-postings");
     router.refresh();
   };
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-4xl mx-auto space-y-6">
       {/* Page header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-white">
           {pageTitle}
         </h1>
-        <p className="text-sm text-foreground-muted mt-1">
-          Required skill fields map directly to the platform taxonomy for
-          automated matching.
+        <p className="text-xs text-foreground-muted mt-0.5">
+          Required skill thresholds map directly to the platform 4D taxonomy for automated student matching.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {serverError && (
+        <div className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-xs text-destructive">
+          {serverError}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         {/* Core details card */}
-        <div className="rounded-md border border-border bg-card">
-          <div className="border-b border-border px-4 py-3">
-            <h2 className="text-base font-semibold text-foreground">
+        <div className="rounded-lg border border-border bg-[#0E131F] p-5 space-y-4">
+          <div className="border-b border-border/80 pb-2">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-white">
               Posting Details
             </h2>
           </div>
-          <div className="p-4 space-y-4">
+
+          <div className="space-y-4">
             {/* Title */}
             <div>
               <Label
                 htmlFor="title"
-                className="text-sm font-medium text-foreground-muted mb-1 block"
+                className="text-xs font-semibold text-white mb-1 block"
               >
                 Role Title <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="title"
                 {...register("title")}
-                placeholder="e.g. Backend Engineering Intern"
+                placeholder="e.g. Distributed Systems Engineer / Backend Intern"
+                className="bg-white/[0.03] border-border text-white placeholder:text-foreground-subtle h-9 text-xs"
               />
               {errors.title && (
-                <p className="mt-1 text-xs text-destructive">
+                <p className="mt-1 text-[11px] text-destructive">
                   {errors.title.message}
                 </p>
               )}
@@ -165,18 +172,18 @@ export function PostingForm({ type, pageTitle }: PostingFormProps) {
             <div>
               <Label
                 htmlFor="description"
-                className="text-sm font-medium text-foreground-muted mb-1 block"
+                className="text-xs font-semibold text-white mb-1 block"
               >
-                Job Description <span className="text-destructive">*</span>
+                Role & Project Description <span className="text-destructive">*</span>
               </Label>
               <Textarea
                 id="description"
                 {...register("description")}
-                placeholder="Describe the role, responsibilities, and what the intern/candidate will work on..."
-                className="min-h-[140px] resize-y"
+                placeholder="Describe project responsibilities, technical challenges, and team expectations..."
+                className="min-h-[120px] bg-white/[0.03] border-border text-white placeholder:text-foreground-subtle text-xs resize-y"
               />
               {errors.description && (
-                <p className="mt-1 text-xs text-destructive">
+                <p className="mt-1 text-[11px] text-destructive">
                   {errors.description.message}
                 </p>
               )}
@@ -187,7 +194,7 @@ export function PostingForm({ type, pageTitle }: PostingFormProps) {
               <div>
                 <Label
                   htmlFor="location"
-                  className="text-sm font-medium text-foreground-muted mb-1 block"
+                  className="text-xs font-semibold text-white mb-1 block"
                 >
                   Location
                 </Label>
@@ -195,45 +202,53 @@ export function PostingForm({ type, pageTitle }: PostingFormProps) {
                   id="location"
                   {...register("location")}
                   placeholder="e.g. Bangalore / Remote"
+                  className="bg-white/[0.03] border-border text-white placeholder:text-foreground-subtle h-9 text-xs"
                 />
               </div>
               <div>
                 <Label
                   htmlFor="duration"
-                  className="text-sm font-medium text-foreground-muted mb-1 block"
+                  className="text-xs font-semibold text-white mb-1 block"
                 >
                   Duration
                 </Label>
                 <Input
                   id="duration"
                   {...register("duration")}
-                  placeholder="e.g. 2 months"
+                  placeholder="e.g. 3 months"
+                  className="bg-white/[0.03] border-border text-white placeholder:text-foreground-subtle h-9 text-xs"
                 />
               </div>
               <div>
                 <Label
                   htmlFor="stipendRange"
-                  className="text-sm font-medium text-foreground-muted mb-1 block"
+                  className="text-xs font-semibold text-white mb-1 block"
                 >
-                  Stipend Range
+                  Stipend Range / Compensation
                 </Label>
                 <Input
                   id="stipendRange"
                   {...register("stipendRange")}
-                  placeholder="e.g. ₹10,000–₹15,000/month"
+                  placeholder="e.g. ₹20,000–₹30,000/month"
+                  className="bg-white/[0.03] border-border text-white placeholder:text-foreground-subtle h-9 text-xs"
                 />
               </div>
               <div>
                 <Label
                   htmlFor="deadline"
-                  className="text-sm font-medium text-foreground-muted mb-1 block"
+                  className="text-xs font-semibold text-white mb-1 block"
                 >
                   Application Deadline{" "}
                   <span className="text-destructive">*</span>
                 </Label>
-                <Input id="deadline" type="date" {...register("deadline")} />
+                <Input
+                  id="deadline"
+                  type="date"
+                  {...register("deadline")}
+                  className="bg-white/[0.03] border-border text-white h-9 text-xs"
+                />
                 {errors.deadline && (
-                  <p className="mt-1 text-xs text-destructive">
+                  <p className="mt-1 text-[11px] text-destructive">
                     {errors.deadline.message}
                   </p>
                 )}
@@ -243,29 +258,29 @@ export function PostingForm({ type, pageTitle }: PostingFormProps) {
         </div>
 
         {/* Required skills card */}
-        <div className="rounded-md border border-border bg-card">
-          <div className="border-b border-border px-4 py-3 flex items-center justify-between">
+        <div className="rounded-lg border border-border bg-[#0E131F] p-5 space-y-4">
+          <div className="border-b border-border/80 pb-2 flex items-center justify-between">
             <div>
-              <h2 className="text-base font-semibold text-foreground">
-                Required Skills
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-white">
+                Required Competency Thresholds
               </h2>
               <p className="text-xs text-foreground-muted mt-0.5">
-                Map skills to the platform taxonomy — used for automated
-                candidate matching.
+                Evaluated against verified 4D assessment scores (0–100%) for matching candidates.
               </p>
             </div>
             <Button
               type="button"
               size="sm"
               variant="outline"
-              className="h-8 gap-1.5 text-xs"
+              className="h-7 gap-1.5 text-xs border-border bg-white/[0.03] text-foreground hover:text-white hover:bg-white/10"
               onClick={() => append({ skill: "", minThreshold: 60 })}
             >
-              <PlusCircle className="h-3.5 w-3.5" />
-              Add Skill
+              <PlusCircle className="h-3 w-3 text-primary" />
+              <span>Add Skill</span>
             </Button>
           </div>
-          <div className="p-4 space-y-3">
+
+          <div className="space-y-3">
             {fields.map((field, index) => (
               <div key={field.id} className="flex items-start gap-3">
                 <div className="flex-1">
@@ -276,10 +291,10 @@ export function PostingForm({ type, pageTitle }: PostingFormProps) {
                       })
                     }
                   >
-                    <SelectTrigger className="h-9 text-sm">
-                      <SelectValue placeholder="Select domain…" />
+                    <SelectTrigger className="h-9 text-xs bg-[#111827] border-border text-white">
+                      <SelectValue placeholder="Select domain taxonomy…" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-[#111827] border-border text-white z-50 shadow-2xl">
                       {DOMAINS.map((d) => (
                         <SelectItem key={d.value} value={d.value}>
                           {d.label}
@@ -288,12 +303,12 @@ export function PostingForm({ type, pageTitle }: PostingFormProps) {
                     </SelectContent>
                   </Select>
                   {errors.requiredSkills?.[index]?.skill && (
-                    <p className="mt-0.5 text-xs text-destructive">
+                    <p className="mt-0.5 text-[11px] text-destructive">
                       {errors.requiredSkills[index]?.skill?.message}
                     </p>
                   )}
                 </div>
-                <div className="w-36">
+                <div className="w-40">
                   <Input
                     type="number"
                     min={0}
@@ -301,11 +316,11 @@ export function PostingForm({ type, pageTitle }: PostingFormProps) {
                     {...register(`requiredSkills.${index}.minThreshold`, {
                       valueAsNumber: true,
                     })}
-                    placeholder="Min score (0–100)"
-                    className="h-9 text-sm"
+                    placeholder="Min score (≥ %)"
+                    className="h-9 text-xs bg-white/[0.03] border-border text-white"
                   />
                   {errors.requiredSkills?.[index]?.minThreshold && (
-                    <p className="mt-0.5 text-xs text-destructive">
+                    <p className="mt-0.5 text-[11px] text-destructive">
                       {errors.requiredSkills[index]?.minThreshold?.message}
                     </p>
                   )}
@@ -314,7 +329,7 @@ export function PostingForm({ type, pageTitle }: PostingFormProps) {
                   type="button"
                   size="sm"
                   variant="ghost"
-                  className="h-9 w-9 p-0 text-foreground-subtle hover:text-destructive"
+                  className="h-9 w-9 p-0 text-foreground-subtle hover:text-destructive hover:bg-destructive/10"
                   onClick={() => remove(index)}
                   disabled={fields.length === 1}
                 >
@@ -322,36 +337,26 @@ export function PostingForm({ type, pageTitle }: PostingFormProps) {
                 </Button>
               </div>
             ))}
-            {errors.requiredSkills?.root && (
-              <p className="text-xs text-destructive">
-                {errors.requiredSkills.root.message}
-              </p>
-            )}
-            {errors.requiredSkills?.message && (
-              <p className="text-xs text-destructive">
-                {errors.requiredSkills.message as string}
-              </p>
-            )}
           </div>
         </div>
 
         {/* Eligibility card */}
-        <div className="rounded-md border border-border bg-card">
-          <div className="border-b border-border px-4 py-3">
-            <h2 className="text-base font-semibold text-foreground">
-              Eligibility Criteria
+        <div className="rounded-lg border border-border bg-[#0E131F] p-5 space-y-4">
+          <div className="border-b border-border/80 pb-2">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-white">
+              Eligibility Criteria (Optional)
             </h2>
             <p className="text-xs text-foreground-muted mt-0.5">
-              Optional — leave blank for open eligibility.
+              Leave blank for open eligibility across all institutions.
             </p>
           </div>
-          <div className="p-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <Label
                 htmlFor="minCGPA"
-                className="text-sm font-medium text-foreground-muted mb-1 block"
+                className="text-xs font-semibold text-white mb-1 block"
               >
-                Minimum CGPA
+                Minimum CGPA (0–10)
               </Label>
               <Input
                 id="minCGPA"
@@ -360,15 +365,16 @@ export function PostingForm({ type, pageTitle }: PostingFormProps) {
                 min={0}
                 max={10}
                 {...register("eligibilityCriteria.minCGPA", {
-                  valueAsNumber: true,
+                  setValueAs: (v) => (v === "" ? undefined : parseFloat(v)),
                 })}
-                placeholder="e.g. 6.5"
+                placeholder="e.g. 7.5"
+                className="bg-white/[0.03] border-border text-white placeholder:text-foreground-subtle h-9 text-xs"
               />
             </div>
             <div>
               <Label
                 htmlFor="institution"
-                className="text-sm font-medium text-foreground-muted mb-1 block"
+                className="text-xs font-semibold text-white mb-1 block"
               >
                 Restrict to Institution
               </Label>
@@ -376,38 +382,36 @@ export function PostingForm({ type, pageTitle }: PostingFormProps) {
                 id="institution"
                 {...register("eligibilityCriteria.institution")}
                 placeholder="e.g. IIT Madras (leave blank for all)"
+                className="bg-white/[0.03] border-border text-white placeholder:text-foreground-subtle h-9 text-xs"
               />
             </div>
           </div>
         </div>
 
-        {/* Submit */}
-        {serverError && (
-          <div className="rounded-md border border-destructive-border bg-destructive-bg px-4 py-3">
-            <p className="text-sm text-destructive">{serverError}</p>
-          </div>
-        )}
-        <div className="flex items-center justify-end gap-3">
+        {/* Action Buttons */}
+        <div className="flex items-center justify-end gap-3 pt-2">
           <Button
             type="button"
             variant="outline"
+            size="sm"
+            className="h-9 text-xs border-border bg-white/[0.03] hover:bg-white/10"
             onClick={() => router.back()}
-            disabled={isSubmitting}
           >
             Cancel
           </Button>
           <Button
             type="submit"
-            className="gap-1.5 bg-primary text-white hover:bg-primary-hover"
+            size="sm"
             disabled={isSubmitting}
+            className="h-9 gap-1.5 bg-primary px-4 text-xs font-semibold text-white hover:bg-primary-hover shadow-xs"
           >
             {isSubmitting ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Publishing…
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                Publishing...
               </>
             ) : (
-              "Publish Posting"
+              "Publish Opportunity"
             )}
           </Button>
         </div>

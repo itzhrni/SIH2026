@@ -1,11 +1,25 @@
-﻿// app/(industry)/dashboard/page.tsx
-// RULE FE-01: Server Component — async data fetch, no hooks
+// app/(industry)/recruiter-dashboard/page.tsx
+// Recruiter Dashboard: hiring pipeline metrics, active opportunity postings, applicant review queues.
+// RULE FE-01: Server Component.
+
+import React from "react";
 import { getServerSession } from "next-auth";
 import { nextAuthConfig } from "@/lib/auth/next-auth-config";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
-import { Briefcase, Users, Clock, CheckCircle } from "lucide-react";
+import {
+  Briefcase,
+  Users,
+  Clock,
+  CheckCircle2,
+  PlusCircle,
+  ArrowRight,
+  Sparkles,
+  Layers,
+  ChevronRight,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default async function IndustryDashboardPage() {
   const session = await getServerSession(nextAuthConfig);
@@ -41,138 +55,188 @@ export default async function IndustryDashboardPage() {
     ]);
 
   return (
-    <div className="max-w-7xl mx-auto">
-      {/* Page header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-          Dashboard
-        </h1>
-        <p className="text-sm text-foreground-muted mt-1">
-          Welcome back, {session.user.name}
-        </p>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-indigo-400">
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>Recruiter Console</span>
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-white mt-0.5">
+            Industry Dashboard
+          </h1>
+          <p className="text-xs text-foreground-muted mt-0.5">
+            Welcome back, {session.user.name}. Track hiring pipelines and verified candidate discoveries.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2.5">
+          <Link href="/industry/post/internship">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 gap-1.5 border-border bg-[#0E131F] text-xs font-medium text-foreground hover:text-white hover:bg-white/5"
+            >
+              <PlusCircle className="h-3.5 w-3.5 text-indigo-400" />
+              <span>Post Internship</span>
+            </Button>
+          </Link>
+          <Link href="/industry/post/job">
+            <Button
+              size="sm"
+              className="h-8 gap-1.5 bg-primary px-3 text-xs font-semibold text-white hover:bg-primary-hover shadow-xs"
+            >
+              <Briefcase className="h-3.5 w-3.5" />
+              <span>Post Job</span>
+            </Button>
+          </Link>
+        </div>
       </div>
 
-      {/* KPI cards */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 mb-6">
-        <div className="rounded-md border border-border bg-card p-4">
-          <p className="text-xs font-medium uppercase tracking-wide text-foreground-muted">
-            Active Postings
-          </p>
-          <p className="mt-1 text-4xl font-bold tabular-nums text-foreground">
+      {/* KPI Cards Row */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="rounded-lg border border-border bg-[#0E131F] p-3.5 transition-colors hover:border-indigo-500/40">
+          <div className="flex items-center justify-between text-foreground-muted">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground-subtle">
+              Active Postings
+            </span>
+            <div className="h-2 w-2 rounded-full bg-primary" />
+          </div>
+          <p className="mt-2 text-2xl font-bold tabular-nums text-white">
             {activePostings}
           </p>
-          <Briefcase className="mt-2 h-4 w-4 text-foreground-subtle" />
-        </div>
-        <div className="rounded-md border border-border bg-card p-4">
-          <p className="text-xs font-medium uppercase tracking-wide text-foreground-muted">
-            Total Applicants
+          <p className="mt-1 text-[11px] text-foreground-muted">
+            Live recruitment listings
           </p>
-          <p className="mt-1 text-4xl font-bold tabular-nums text-foreground">
+        </div>
+
+        <div className="rounded-lg border border-border bg-[#0E131F] p-3.5 transition-colors hover:border-indigo-500/40">
+          <div className="flex items-center justify-between text-foreground-muted">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground-subtle">
+              Total Applicants
+            </span>
+            <div className="h-2 w-2 rounded-full bg-indigo-400" />
+          </div>
+          <p className="mt-2 text-2xl font-bold tabular-nums text-white">
             {totalApplications}
           </p>
-          <Users className="mt-2 h-4 w-4 text-foreground-subtle" />
-        </div>
-        <div className="rounded-md border border-border bg-card p-4">
-          <p className="text-xs font-medium uppercase tracking-wide text-foreground-muted">
-            Pending Review
+          <p className="mt-1 text-[11px] text-foreground-muted">
+            Verified candidate submissions
           </p>
-          <p className="mt-1 text-4xl font-bold tabular-nums text-foreground">
+        </div>
+
+        <div className="rounded-lg border border-border bg-[#0E131F] p-3.5 transition-colors hover:border-indigo-500/40">
+          <div className="flex items-center justify-between text-foreground-muted">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground-subtle">
+              Pending Review
+            </span>
+            <div className="h-2 w-2 rounded-full bg-amber-400" />
+          </div>
+          <p className="mt-2 text-2xl font-bold tabular-nums text-white">
             {pendingReview}
           </p>
-          <Clock className="mt-2 h-4 w-4 text-foreground-subtle" />
-        </div>
-        <div className="rounded-md border border-border bg-card p-4">
-          <p className="text-xs font-medium uppercase tracking-wide text-foreground-muted">
-            Reviewed
+          <p className="mt-1 text-[11px] text-foreground-muted">
+            Stage: Applied
           </p>
-          <p className="mt-1 text-4xl font-bold tabular-nums text-foreground">
+        </div>
+
+        <div className="rounded-lg border border-border bg-[#0E131F] p-3.5 transition-colors hover:border-indigo-500/40">
+          <div className="flex items-center justify-between text-foreground-muted">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground-subtle">
+              In Pipeline
+            </span>
+            <div className="h-2 w-2 rounded-full bg-emerald-400" />
+          </div>
+          <p className="mt-2 text-2xl font-bold tabular-nums text-white">
             {totalApplications - pendingReview}
           </p>
-          <CheckCircle className="mt-2 h-4 w-4 text-foreground-subtle" />
+          <p className="mt-1 text-[11px] text-foreground-muted">
+            Shortlisted & Interviewed
+          </p>
         </div>
       </div>
 
-      {/* Active postings table */}
-      <div className="rounded-md border border-border bg-card">
-        <div className="border-b border-border px-4 py-3 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-foreground">
-            Active Postings
-          </h2>
-          <div className="flex items-center gap-2">
-            <Link
-              href="/industry/post/internship"
-              className="rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-white hover:bg-primary-hover transition-colors duration-150"
-            >
-              + Post Internship
-            </Link>
-            <Link
-              href="/industry/post/job"
-              className="rounded-md border border-border px-3 py-1.5 text-xs font-medium text-foreground-muted hover:bg-background-muted transition-colors duration-150"
-            >
-              + Post Job
-            </Link>
-          </div>
-        </div>
-        {postings.length === 0 ? (
-          <div className="px-4 py-10 text-center">
-            <p className="text-sm text-foreground-muted">
-              No active postings yet.
+      {/* Active Postings High-Density Table */}
+      <div className="rounded-lg border border-border bg-[#0B0F17] overflow-hidden">
+        <div className="flex items-center justify-between border-b border-border/80 bg-[#0E131F] px-4 py-3">
+          <div>
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-white">
+              Active Opportunity Postings
+            </h2>
+            <p className="text-[11px] text-foreground-muted">
+              Applicant volume and pipeline management for published roles
             </p>
-            <Link
-              href="/industry/post/internship"
-              className="mt-3 inline-block text-sm text-primary hover:underline"
-            >
-              Create your first internship posting →
+          </div>
+          <Link
+            href="/industry/my-postings"
+            className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
+          >
+            <span>View All Postings</span>
+            <ChevronRight className="h-3 w-3" />
+          </Link>
+        </div>
+
+        {postings.length === 0 ? (
+          <div className="py-12 text-center text-xs text-foreground-muted">
+            <Briefcase className="mx-auto h-8 w-8 text-foreground-subtle mb-2" />
+            <p className="font-semibold text-white">No active postings found</p>
+            <p className="mt-1 text-foreground-muted">
+              Create your first internship or job opportunity to begin receiving verified applicants.
+            </p>
+            <Link href="/industry/post/internship" className="inline-block mt-3">
+              <Button size="sm" className="h-7 text-xs bg-primary text-white hover:bg-primary-hover">
+                Create First Posting
+              </Button>
             </Link>
           </div>
         ) : (
-          <div className="overflow-hidden">
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs text-left">
               <thead>
-                <tr className="border-b border-border bg-background-subtle">
-                  <th className="px-3 py-2.5 text-left text-xs font-medium uppercase tracking-wide text-foreground-muted">
-                    Role
+                <tr className="border-b border-border/60 bg-[#0E131F]/50 text-foreground-subtle text-[11px] uppercase tracking-wider font-semibold">
+                  <th scope="col" className="px-4 py-3">
+                    Role Title & Type
                   </th>
-                  <th className="px-3 py-2.5 text-left text-xs font-medium uppercase tracking-wide text-foreground-muted">
-                    Type
-                  </th>
-                  <th className="px-3 py-2.5 text-left text-xs font-medium uppercase tracking-wide text-foreground-muted">
-                    Applicants
-                  </th>
-                  <th className="px-3 py-2.5 text-left text-xs font-medium uppercase tracking-wide text-foreground-muted">
+                  <th scope="col" className="px-4 py-3">
                     Deadline
                   </th>
-                  <th className="px-3 py-2.5" />
+                  <th scope="col" className="px-4 py-3">
+                    Applicants
+                  </th>
+                  <th scope="col" className="px-4 py-3 text-right">
+                    Action
+                  </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="divide-y divide-border/60">
                 {postings.map((p) => (
-                  <tr
-                    key={p.id}
-                    className="transition-colors duration-150 hover:bg-background-subtle"
-                  >
-                    <td className="px-3 py-2.5 font-medium text-foreground">
-                      {p.title}
+                  <tr key={p.id} className="transition-colors hover:bg-white/[0.02]">
+                    <td className="px-4 py-3.5">
+                      <div className="font-semibold text-white">{p.title}</div>
+                      <span className="rounded bg-white/[0.04] px-1.5 py-0.2 text-[10px] text-foreground-muted border border-border/40 mt-1 inline-block">
+                        {p.type}
+                      </span>
                     </td>
-                    <td className="px-3 py-2.5 text-foreground-muted">
-                      {p.type}
+                    <td className="px-4 py-3.5 text-foreground-muted tabular-nums">
+                      {new Date(p.deadline).toLocaleDateString()}
                     </td>
-                    <td className="px-3 py-2.5 tabular-nums text-foreground-muted">
-                      {p._count.applications}
+                    <td className="px-4 py-3.5">
+                      <span className="font-bold text-white tabular-nums">
+                        {p._count.applications}
+                      </span>
+                      <span className="text-foreground-subtle ml-1">candidates</span>
                     </td>
-                    <td className="px-3 py-2.5 text-foreground-muted">
-                      {new Date(p.deadline).toLocaleDateString("en-IN", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </td>
-                    <td className="px-3 py-2.5 text-right">
-                      <Link
-                        href={`/industry/pipeline/${p.id}`}
-                        className="rounded-md border border-border px-2.5 py-1 text-xs text-foreground-muted hover:bg-background-muted transition-colors duration-150"
-                      >
-                        Pipeline
+                    <td className="px-4 py-3.5 text-right">
+                      <Link href={`/industry/pipeline`}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-7 text-xs border-border bg-white/[0.03] text-foreground hover:text-white hover:bg-white/10"
+                        >
+                          <span>Manage</span>
+                          <ArrowRight className="h-3 w-3 ml-1" />
+                        </Button>
                       </Link>
                     </td>
                   </tr>

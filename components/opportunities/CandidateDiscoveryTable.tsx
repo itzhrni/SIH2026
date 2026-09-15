@@ -73,7 +73,7 @@ export function CandidateDiscoveryTable({
               placeholder="Search candidates by name, institution, or department..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-md border border-input bg-background pl-8 pr-3 py-1.5 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              className="w-full rounded-md border border-border bg-[#0B0F17] pl-8 pr-3 py-1.5 text-xs text-foreground placeholder:text-foreground-subtle focus:outline-none focus:ring-1 focus:ring-primary"
             />
           </div>
 
@@ -82,11 +82,11 @@ export function CandidateDiscoveryTable({
             <select
               value={selectedDomain}
               onChange={(e) => setSelectedDomain(e.target.value)}
-              className="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              className="w-full rounded-md border border-border bg-[#0B0F17] px-3 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
             >
-              <option value="ALL">All Skill Domains</option>
+              <option value="ALL" className="bg-[#111827] text-white">All Skill Domains</option>
               {allDomains.map((d) => (
-                <option key={d} value={d}>
+                <option key={d} value={d} className="bg-[#111827] text-white">
                   {d}
                 </option>
               ))}
@@ -98,13 +98,13 @@ export function CandidateDiscoveryTable({
             <select
               value={selectedTrajectory}
               onChange={(e) => setSelectedTrajectory(e.target.value)}
-              className="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              className="w-full rounded-md border border-border bg-[#0B0F17] px-3 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
             >
-              <option value="ALL">All Trajectories</option>
-              <option value="STABLE_HIGH">Consistent High Performer</option>
-              <option value="IMPROVING">Rapid Improver (+15%)</option>
-              <option value="GROWTH_DETECTED">Positive Growth</option>
-              <option value="BASELINE">Baseline Verified</option>
+              <option value="ALL" className="bg-[#111827] text-white">All Trajectories</option>
+              <option value="STABLE_HIGH" className="bg-[#111827] text-white">Consistent High Performer</option>
+              <option value="IMPROVING" className="bg-[#111827] text-white">Rapid Improver (+15%)</option>
+              <option value="GROWTH_DETECTED" className="bg-[#111827] text-white">Positive Growth</option>
+              <option value="BASELINE" className="bg-[#111827] text-white">Baseline Verified</option>
             </select>
           </div>
         </div>

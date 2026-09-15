@@ -157,13 +157,13 @@ export function PlacementPipeline({
             <select
               value={selectedOpportunityId}
               onChange={(e) => setSelectedOpportunityId(e.target.value)}
-              className="rounded-md border border-input bg-background px-3 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring max-w-[240px]"
+              className="rounded-md border border-border bg-[#0B0F17] px-3 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary max-w-[240px] cursor-pointer"
             >
-              <option value="ALL">
+              <option value="ALL" className="bg-[#111827] text-white">
                 All Active Postings ({opportunities.length})
               </option>
               {opportunities.map((opp) => (
-                <option key={opp.id} value={opp.id}>
+                <option key={opp.id} value={opp.id} className="bg-[#111827] text-white">
                   {opp.title} ({opp.type})
                 </option>
               ))}
