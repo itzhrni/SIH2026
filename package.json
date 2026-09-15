@@ -4,7 +4,7 @@
   "private": true,
   "description": "SIH 2026 - AI-Powered Academia-Industry Collaboration & Continuous Competency Platform",
   "scripts": {
-    "dev": "next dev -p 3001",
+    "dev": "next dev -H 0.0.0.0 -p 3000",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
