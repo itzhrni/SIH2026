@@ -112,13 +112,13 @@ export const nextAuthConfig: NextAuthOptions = {
     },
 
     async redirect({ url, baseUrl }) {
-      if (url.startsWith("/")) return url;
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
       try {
         if (new URL(url).origin === baseUrl) return url;
       } catch {
         // ignore
       }
-      return "/login";
+      return baseUrl;
     },
   },
 };

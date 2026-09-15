@@ -100,8 +100,13 @@ export default function Navbar({ user }: NavbarProps) {
   else if (role === "INSTITUTIONAL_ADMIN") navItems = adminNavItems;
 
   const handleLogout = async () => {
-    await signOut({ redirect: false });
-    window.location.href = "/login";
+    try {
+      await signOut({ redirect: false });
+    } catch (err) {
+      console.error("Sign out error", err);
+    } finally {
+      window.location.href = "/login";
+    }
   };
 
   const getInitials = (name?: string | null) => {

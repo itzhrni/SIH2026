@@ -91,8 +91,13 @@ export function IndustryAppShell({ children, user }: IndustryAppShellProps) {
       .toUpperCase() || "RC";
 
   const handleLogout = async () => {
-    await signOut({ redirect: false });
-    window.location.href = "/login";
+    try {
+      await signOut({ redirect: false });
+    } catch (err) {
+      console.error("Sign out error", err);
+    } finally {
+      window.location.href = "/login";
+    }
   };
 
   const getPageInfo = () => {

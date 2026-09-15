@@ -80,8 +80,13 @@ export function StudentAppShell({ children, user }: StudentAppShellProps) {
       .toUpperCase() || "ST";
 
   const handleLogout = async () => {
-    await signOut({ redirect: false });
-    window.location.href = "/login";
+    try {
+      await signOut({ redirect: false });
+    } catch (err) {
+      console.error("Sign out error", err);
+    } finally {
+      window.location.href = "/login";
+    }
   };
 
   // Determine current page title / breadcrumb
