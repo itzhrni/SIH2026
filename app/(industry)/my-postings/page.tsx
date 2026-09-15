@@ -117,9 +117,9 @@ export default async function OpportunitiesPage() {
                         {opp.stipendRange}
                       </span>
                     )}
-                    <span className="flex items-center gap-1 text-foreground-subtle">
+                    <span className="flex items-center gap-1 text-foreground-subtle" suppressHydrationWarning>
                       <Calendar className="h-3 w-3" />
-                      Closes {new Date(opp.deadline).toLocaleDateString()}
+                      Closes {new Date(opp.deadline).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })}
                     </span>
                   </div>
                 </div>
@@ -175,8 +175,8 @@ export default async function OpportunitiesPage() {
                   </span>
                 </div>
 
-                <span className="text-[10px] text-foreground-subtle hidden sm:inline">
-                  Created {new Date(opp.createdAt).toLocaleDateString()}
+                <span className="text-[10px] text-foreground-subtle hidden sm:inline" suppressHydrationWarning>
+                  Created {new Date(opp.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })}
                 </span>
               </div>
             </div>

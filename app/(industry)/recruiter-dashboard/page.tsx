@@ -218,8 +218,8 @@ export default async function IndustryDashboardPage() {
                         {p.type}
                       </span>
                     </td>
-                    <td className="px-4 py-3.5 text-foreground-muted tabular-nums">
-                      {new Date(p.deadline).toLocaleDateString()}
+                    <td className="px-4 py-3.5 text-foreground-muted tabular-nums" suppressHydrationWarning>
+                      {new Date(p.deadline).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })}
                     </td>
                     <td className="px-4 py-3.5">
                       <span className="font-bold text-white tabular-nums">

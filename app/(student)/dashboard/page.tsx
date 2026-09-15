@@ -428,10 +428,11 @@ export default async function StudentDashboardPage() {
                 Latest 4D Evaluation
               </h2>
               {latestGapReport && (
-                <span className="text-[10px] text-foreground-subtle">
+                <span className="text-[10px] text-foreground-subtle" suppressHydrationWarning>
                   {new Date(latestGapReport.generatedAt).toLocaleDateString("en-US", {
                     month: "short",
                     day: "numeric",
+                    timeZone: "UTC",
                   })}
                 </span>
               )}

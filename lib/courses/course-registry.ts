@@ -354,3 +354,33 @@ upstream backend_cluster {
     ],
   },
 ];
+
+export function getCourseById(id: string): InPortalCourse | undefined {
+  return IN_PORTAL_COURSES.find((c) => c.id === id);
+}
+
+export function getCoursesForDomain(assessmentDomainId: string): InPortalCourse[] {
+  const norm = assessmentDomainId.toLowerCase().replace(/_/g, "-");
+  return IN_PORTAL_COURSES.filter(
+    (c) =>
+      c.assessmentDomainId.toLowerCase() === norm ||
+      c.domain.toLowerCase().includes(norm) ||
+      c.skills.some((s) => s.toLowerCase().includes(norm) || norm.includes(s.toLowerCase())),
+  );
+}
+
+export function getRecommendedCourses(gapDomains: string[]): InPortalCourse[] {
+  if (gapDomains.length === 0) return IN_PORTAL_COURSES.slice(0, 2);
+  const matched = IN_PORTAL_COURSES.filter((c) =>
+    gapDomains.some((d) => {
+      const norm = d.toLowerCase().replace(/_/g, "-");
+      return (
+        c.assessmentDomainId.toLowerCase() === norm ||
+        c.domain.toLowerCase().includes(norm) ||
+        c.skills.some((s) => s.toLowerCase().includes(norm) || norm.includes(s.toLowerCase()))
+      );
+    }),
+  );
+  if (matched.length === 0) return IN_PORTAL_COURSES.slice(0, 2);
+  return matched;
+}

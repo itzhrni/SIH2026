@@ -56,6 +56,7 @@ export function OpportunityCard({
       month: "short",
       day: "numeric",
       year: "numeric",
+      timeZone: "UTC",
     },
   );
 
@@ -154,7 +155,7 @@ export function OpportunityCard({
 
       {/* Actions Row */}
       <div className="flex items-center justify-between pt-1 text-xs">
-        <span className="text-[11px] text-foreground-subtle flex items-center gap-1">
+        <span className="text-[11px] text-foreground-subtle flex items-center gap-1" suppressHydrationWarning>
           <Calendar className="h-3 w-3" />
           Closes {deadlineFormatted}
         </span>

@@ -271,7 +271,7 @@ export function PlacementPipeline({
                     <strong className="text-foreground font-semibold">
                       {applicant.opportunityTitle}
                     </strong>{" "}
-                    on {new Date(applicant.appliedAt).toLocaleDateString()}
+                    on {new Date(applicant.appliedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })}
                   </p>
                 </div>
 

@@ -185,10 +185,10 @@ export default function AcadApplicationsPage() {
                       <span>{app.opportunity.stipendRange}</span>
                     </div>
                   )}
-                  <div className="flex items-center gap-1.5 ml-auto">
+                  <div className="flex items-center gap-1.5 ml-auto" suppressHydrationWarning>
                     <Calendar className="h-3.5 w-3.5 text-amber-400" />
                     <span>
-                      Applied: {new Date(app.appliedAt).toLocaleDateString()}
+                      Applied: {new Date(app.appliedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })}
                     </span>
                   </div>
                 </div>

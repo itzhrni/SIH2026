@@ -208,7 +208,7 @@ export default function AcadOpportunitiesPage() {
             No opportunities match your filter
           </p>
           <p className="mt-1 text-xs text-foreground-muted">
-            Try selecting "All Programs" or clearing your search keywords.
+            Try selecting &quot;All Programs&quot; or clearing your search keywords.
           </p>
         </div>
       ) : (
@@ -277,10 +277,10 @@ export default function AcadOpportunitiesPage() {
                     <span>{item.stipendRange}</span>
                   </div>
                 )}
-                <div className="flex items-center gap-1.5 ml-auto">
+                <div className="flex items-center gap-1.5 ml-auto" suppressHydrationWarning>
                   <Calendar className="h-3.5 w-3.5 text-amber-400" />
                   <span>
-                    Deadline: {new Date(item.deadline).toLocaleDateString()}
+                    Deadline: {new Date(item.deadline).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })}
                   </span>
                 </div>
               </div>

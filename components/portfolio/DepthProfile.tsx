@@ -56,6 +56,7 @@ export function DepthProfile({ domainScores }: DepthProfileProps) {
               month: "short",
               day: "numeric",
               year: "numeric",
+              timeZone: "UTC",
             })
           : "Recently";
 

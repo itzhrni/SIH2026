@@ -128,20 +128,21 @@ export default async function ApplicationsPage() {
                       month: "short",
                       day: "numeric",
                       year: "numeric",
+                      timeZone: "UTC",
                     },
                   );
 
                   return (
                     <tr
                       key={app.id}
-                      className="transition-colors hover:bg-white/[0.02]"
+                      className="border-b border-border/40 hover:bg-white/[0.02] transition-colors"
                     >
                       <td className="px-4 py-3.5">
                         <div className="font-semibold text-white">
                           {app.opportunity.title}
                         </div>
-                        <div className="text-[11px] text-foreground-muted flex items-center gap-1 mt-0.5">
-                          <span className="rounded bg-white/[0.04] px-1.5 py-0.2 text-[10px] text-foreground-muted border border-border/40">
+                        <div className="flex items-center gap-2 mt-0.5 text-[11px] text-foreground-subtle">
+                          <span className="rounded bg-primary/10 text-primary border border-primary/20 px-1.5 py-0.2 font-bold uppercase tracking-wider text-[9px]">
                             {app.opportunity.type}
                           </span>
                           {app.opportunity.location && (
@@ -155,7 +156,7 @@ export default async function ApplicationsPage() {
                       <td className="px-4 py-3.5 text-foreground font-medium">
                         {companyName}
                       </td>
-                      <td className="px-4 py-3.5 text-foreground-muted tabular-nums">
+                      <td className="px-4 py-3.5 text-foreground-muted tabular-nums" suppressHydrationWarning>
                         {appliedDate}
                       </td>
                       <td className="px-4 py-3.5">

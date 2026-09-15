@@ -1,4 +1,4 @@
-﻿// components/opportunities/PipelineTable.tsx
+// components/opportunities/PipelineTable.tsx
 // RULE FE-01: "use client" — onClick handlers, useState for optimistic updates
 "use client";
 
@@ -205,10 +205,11 @@ export function PipelineTable({
                       </SelectContent>
                     </Select>
                   </td>
-                  <td className="px-3 py-2.5 text-xs text-foreground-subtle tabular-nums">
+                  <td className="px-3 py-2.5 text-xs text-foreground-subtle tabular-nums" suppressHydrationWarning>
                     {new Date(app.appliedAt).toLocaleDateString("en-IN", {
                       day: "numeric",
                       month: "short",
+                      timeZone: "UTC",
                     })}
                   </td>
                 </tr>

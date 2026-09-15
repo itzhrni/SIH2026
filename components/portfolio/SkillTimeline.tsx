@@ -52,6 +52,7 @@ export function SkillTimeline({ history }: SkillTimelineProps) {
     const dateLabel = new Date(item.recordedAt).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
+      timeZone: "UTC",
     });
 
     const currentEntry = dateMap.get(dateLabel) ?? { date: dateLabel };
