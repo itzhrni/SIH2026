@@ -33,8 +33,9 @@ interface NavItem {
 
 const studentNavItems: NavItem[] = [
   { label: "Dashboard", href: "/student/dashboard", icon: LayoutDashboard },
+  { label: "In-Portal Courses", href: "/student/courses", icon: GraduationCap },
   { label: "Assess Skills", href: "/student/assess", icon: BookOpen },
-  { label: "Learning Programs", href: "/student/learning-programs", icon: GraduationCap },
+  { label: "Learning Programs", href: "/student/learning-programs", icon: FileText },
   { label: "Opportunities", href: "/student/opportunities", icon: Briefcase },
   { label: "Applications", href: "/student/applications", icon: FileText },
 ];

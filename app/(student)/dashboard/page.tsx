@@ -15,7 +15,7 @@ import { SkillBadge } from "@/components/portfolio/SkillBadge";
 import { computeMatchScore } from "@/lib/matching/opportunity-match";
 import { computeRoleCompatibility } from "@/lib/matching/career-guidance";
 import type { RequiredSkill, DomainScore, OpportunityWithMatch } from "@/types";
-import { BrainCircuit, Award, ArrowRight, Briefcase } from "lucide-react";
+import { BrainCircuit, Award, ArrowRight, Briefcase, BookOpen, GraduationCap, Sparkles } from "lucide-react";
 
 export default async function StudentDashboardPage() {
   const session = await getServerSession(nextAuthConfig);
@@ -109,20 +109,29 @@ export default async function StudentDashboardPage() {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-            Student Skill Console
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-0.5 text-xs font-semibold text-primary mb-1">
+            <Sparkles className="h-3.5 w-3.5" />
+            Verified Skill Console
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            Student Learning & Skill Ledger
           </h1>
           <p className="mt-1 text-sm text-foreground-muted">
-            Track verified assessment scores, role compatibility, and matching
-            industry opportunities.
+            Direct course delivery, 4-dimensional AI assessment, and AI-matched industry internships.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <Link href="/courses">
+            <Button variant="outline" className="h-9 gap-1.5 border-border bg-card px-4 text-sm font-medium hover:bg-background-subtle">
+              <BookOpen className="h-4 w-4 text-primary" />
+              In-Portal Courses
+            </Button>
+          </Link>
           <Link href="/assess">
-            <Button className="h-9 gap-1.5 bg-primary px-4 text-sm text-white hover:bg-primary-hover">
+            <Button className="h-9 gap-1.5 bg-primary px-4 text-sm font-medium text-white shadow-sm hover:bg-primary-hover">
               <BrainCircuit className="h-4 w-4" />
               Start Assessment
             </Button>
@@ -130,39 +139,73 @@ export default async function StudentDashboardPage() {
         </div>
       </div>
 
-      {/* METRIC ROW: 4 cards (UI_UX_SPEC §13 & §5.1) */}
+      {/* Course & Learning Announcement Banner */}
+      <div className="relative overflow-hidden rounded-lg border border-primary/20 bg-gradient-to-r from-primary/10 via-primary/5 to-background p-5">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="rounded bg-primary px-2 py-0.5 text-2xs font-bold uppercase tracking-wider text-white">
+                New Feature
+              </span>
+              <h2 className="text-base font-bold text-foreground">
+                In-Portal Direct Course Delivery is Live
+              </h2>
+            </div>
+            <p className="text-sm text-foreground-muted max-w-2xl">
+              Study curated Engineering (Distributed Systems, Advanced DSA) and AYUSH (Pharmacology, Clinical Panchakarma) modules directly inside SkillLedger with integrated 4D assessment checkpoints.
+            </p>
+          </div>
+          <Link href="/courses" className="shrink-0">
+            <Button className="h-8 gap-1.5 bg-primary px-3 text-xs font-semibold text-white hover:bg-primary-hover">
+              Explore Courses
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Button>
+          </Link>
+        </div>
+      </div>
+
+      {/* METRIC ROW: 4 cards with accent highlights */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <div className="rounded-md border border-border bg-card p-4">
-          <p className="text-xs font-medium uppercase tracking-wide text-foreground-muted">
-            Average Skill Score
-          </p>
-          <p className="mt-1 text-4xl font-bold tabular-nums text-foreground">
-            {avgSkillScore > 0 ? avgSkillScore : "—"}
+        <div className="rounded-lg border border-border bg-card p-4 transition-all hover:border-primary/40 hover:shadow-sm">
+          <div className="flex items-center justify-between text-foreground-muted">
+            <p className="text-xs font-bold uppercase tracking-wider">
+              Avg Skill Score
+            </p>
+            <div className="h-2 w-2 rounded-full bg-primary" />
+          </div>
+          <p className="mt-2 text-3xl font-extrabold tabular-nums text-foreground">
+            {avgSkillScore > 0 ? `${avgSkillScore}%` : "—"}
           </p>
           <p className="mt-1 text-xs text-foreground-subtle">
             {assessedDomainsCount > 0
-              ? "Across assessed domains"
+              ? "Across evaluated domains"
               : "No assessments completed"}
           </p>
         </div>
 
-        <div className="rounded-md border border-border bg-card p-4">
-          <p className="text-xs font-medium uppercase tracking-wide text-foreground-muted">
-            Domains Assessed
-          </p>
-          <p className="mt-1 text-4xl font-bold tabular-nums text-foreground">
+        <div className="rounded-lg border border-border bg-card p-4 transition-all hover:border-primary/40 hover:shadow-sm">
+          <div className="flex items-center justify-between text-foreground-muted">
+            <p className="text-xs font-bold uppercase tracking-wider">
+              Domains Assessed
+            </p>
+            <div className="h-2 w-2 rounded-full bg-indigo-500" />
+          </div>
+          <p className="mt-2 text-3xl font-extrabold tabular-nums text-foreground">
             {assessedDomainsCount}
           </p>
           <p className="mt-1 text-xs text-foreground-subtle">
-            6 pre-built domains available
+            6 specialized knowledge graphs
           </p>
         </div>
 
-        <div className="rounded-md border border-border bg-card p-4">
-          <p className="text-xs font-medium uppercase tracking-wide text-foreground-muted">
-            Verified Badges
-          </p>
-          <p className="mt-1 text-4xl font-bold tabular-nums text-foreground">
+        <div className="rounded-lg border border-border bg-card p-4 transition-all hover:border-primary/40 hover:shadow-sm">
+          <div className="flex items-center justify-between text-foreground-muted">
+            <p className="text-xs font-bold uppercase tracking-wider">
+              Verified Badges
+            </p>
+            <div className="h-2 w-2 rounded-full bg-emerald-500" />
+          </div>
+          <p className="mt-2 text-3xl font-extrabold tabular-nums text-foreground">
             {earnedBadgesCount}
           </p>
           <p className="mt-1 text-xs text-foreground-subtle">
@@ -170,11 +213,14 @@ export default async function StudentDashboardPage() {
           </p>
         </div>
 
-        <div className="rounded-md border border-border bg-card p-4">
-          <p className="text-xs font-medium uppercase tracking-wide text-foreground-muted">
-            Active Applications
-          </p>
-          <p className="mt-1 text-4xl font-bold tabular-nums text-foreground">
+        <div className="rounded-lg border border-border bg-card p-4 transition-all hover:border-primary/40 hover:shadow-sm">
+          <div className="flex items-center justify-between text-foreground-muted">
+            <p className="text-xs font-bold uppercase tracking-wider">
+              Applications
+            </p>
+            <div className="h-2 w-2 rounded-full bg-amber-500" />
+          </div>
+          <p className="mt-2 text-3xl font-extrabold tabular-nums text-foreground">
             {applicationCount}
           </p>
           <p className="mt-1 text-xs text-foreground-subtle">

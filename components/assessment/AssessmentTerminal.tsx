@@ -174,7 +174,12 @@ export function AssessmentTerminal({
       />
 
       {/* Response Input */}
-      <ResponseInput onSubmit={handleSubmitAnswer} isLoading={isLoading} />
+      <ResponseInput
+        onSubmit={handleSubmitAnswer}
+        isLoading={isLoading}
+        conceptNodeId={conceptNodeId}
+        conceptNodeLabel={conceptNodeLabel}
+      />
     </div>
   );
 }
