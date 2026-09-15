@@ -18,8 +18,9 @@ export default async function RootLayout({
   const session = await getServerSession(nextAuthConfig);
   
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body className="min-h-screen bg-background font-sans antialiased">
+
         <div className="relative flex min-h-screen flex-col">
           <Navbar user={session?.user} />
           <main className="flex-1">{children}</main>
