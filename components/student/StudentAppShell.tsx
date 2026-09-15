@@ -79,6 +79,11 @@ export function StudentAppShell({ children, user }: StudentAppShellProps) {
       .substring(0, 2)
       .toUpperCase() || "ST";
 
+  const handleLogout = async () => {
+    await signOut({ redirect: false });
+    window.location.href = "/login";
+  };
+
   // Determine current page title / breadcrumb
   const getPageInfo = () => {
     if (pathname.startsWith("/dashboard")) return { title: "Dashboard", category: "Student Console" };
@@ -95,7 +100,7 @@ export function StudentAppShell({ children, user }: StudentAppShellProps) {
   const pageInfo = getPageInfo();
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex">
+    <div className="min-h-screen bg-[#060A14] text-foreground flex">
       {/* Mobile Backdrop Overlay */}
       {isMobileOpen && (
         <div
@@ -106,17 +111,17 @@ export function StudentAppShell({ children, user }: StudentAppShellProps) {
 
       {/* PRIMARY NAVIGATION: Single Collapsible Left Sidebar */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 flex flex-col border-r border-border bg-[#0B0F17] transition-all duration-200 ease-in-out lg:translate-x-0 ${
+        className={`fixed top-0 bottom-0 left-0 z-50 flex flex-col border-r border-blue-950/40 bg-[#080E1C] transition-all duration-200 ease-in-out lg:translate-x-0 ${
           isMobileOpen ? "translate-x-0 w-64 shadow-2xl" : "-translate-x-full lg:translate-x-0"
         } ${isCollapsed ? "lg:w-[72px]" : "lg:w-60"}`}
       >
         {/* Brand Header */}
-        <div className="flex h-14 items-center justify-between border-b border-border/80 px-3.5">
+        <div className="flex h-14 items-center justify-between border-b border-blue-950/60 px-3.5">
           <Link
             href="/dashboard"
             className="flex items-center gap-2.5 overflow-hidden transition-opacity hover:opacity-90"
           >
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-bold text-xs shadow-sm">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-blue-600 to-indigo-600 text-white font-bold text-xs shadow-sm">
               SL
             </div>
             {!isCollapsed && (
@@ -180,7 +185,7 @@ export function StudentAppShell({ children, user }: StudentAppShellProps) {
                 title={isCollapsed ? item.label : undefined}
                 className={`group flex items-center gap-3 rounded-md px-2.5 py-2 text-xs font-medium transition-colors duration-150 ${
                   isActive
-                    ? "bg-primary/15 text-white border border-primary/30 shadow-xs"
+                    ? "bg-primary/20 text-white border border-primary/40 shadow-xs"
                     : "text-foreground-muted hover:bg-white/5 hover:text-white"
                 } ${isCollapsed ? "justify-center px-0" : ""}`}
               >
@@ -200,7 +205,7 @@ export function StudentAppShell({ children, user }: StudentAppShellProps) {
         </div>
 
         {/* Bottom Utility & Profile Section */}
-        <div className="border-t border-border/80 p-2 space-y-1 bg-[#090D14]">
+        <div className="border-t border-blue-950/60 p-2 space-y-1 bg-[#060A14]">
           {/* Portfolio & Help shortcuts */}
           <Link
             href="/portfolio"
@@ -224,7 +229,7 @@ export function StudentAppShell({ children, user }: StudentAppShellProps) {
             {!isCollapsed && <span className="truncate">Settings</span>}
           </Link>
 
-          <div className="my-1 border-t border-border/60" />
+          <div className="my-1 border-t border-blue-950/60" />
 
           {/* User Profile / Logout Block */}
           <div
@@ -232,7 +237,7 @@ export function StudentAppShell({ children, user }: StudentAppShellProps) {
               isCollapsed ? "justify-center" : ""
             }`}
           >
-            <Avatar className="h-7 w-7 shrink-0 rounded-md border border-border">
+            <Avatar className="h-7 w-7 shrink-0 rounded-md border border-blue-900/40">
               <AvatarFallback className="bg-primary/20 text-primary text-[11px] font-bold">
                 {userInitials}
               </AvatarFallback>
@@ -251,7 +256,7 @@ export function StudentAppShell({ children, user }: StudentAppShellProps) {
 
             {!isCollapsed && (
               <button
-                onClick={() => signOut({ callbackUrl: "/login" })}
+                onClick={handleLogout}
                 className="h-7 w-7 shrink-0 flex items-center justify-center rounded text-foreground-muted hover:bg-white/10 hover:text-destructive transition-colors"
                 title="Sign out"
               >
@@ -268,8 +273,8 @@ export function StudentAppShell({ children, user }: StudentAppShellProps) {
           isCollapsed ? "lg:pl-[72px]" : "lg:pl-60"
         }`}
       >
-        {/* TOP UTILITY BAR (No duplicated nav links!) */}
-        <header className="sticky top-0 z-30 flex h-13 items-center justify-between border-b border-border bg-[#0B0F17]/90 px-4 md:px-6 backdrop-blur-md">
+        {/* TOP UTILITY BAR */}
+        <header className="sticky top-0 z-30 flex h-13 items-center justify-between border-b border-blue-950/60 bg-[#080E1C]/90 px-4 md:px-6 backdrop-blur-md">
           {/* Left: Mobile Toggle & Context Breadcrumbs */}
           <div className="flex items-center gap-3">
             <button
@@ -301,7 +306,7 @@ export function StudentAppShell({ children, user }: StudentAppShellProps) {
                 placeholder="Search skills, courses... ⌘K"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-md border border-border bg-white/[0.04] py-1.5 pl-8 pr-3 text-xs text-foreground placeholder:text-foreground-subtle focus:border-primary/50 focus:bg-white/[0.07] focus:outline-none transition-colors"
+                className="w-full rounded-md border border-blue-950/60 bg-white/[0.04] py-1.5 pl-8 pr-3 text-xs text-foreground placeholder:text-foreground-subtle focus:border-primary/50 focus:bg-white/[0.07] focus:outline-none transition-colors"
               />
             </div>
 
@@ -316,7 +321,7 @@ export function StudentAppShell({ children, user }: StudentAppShellProps) {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="relative h-8 w-8 rounded-full border border-border p-0 hover:bg-white/10"
+                  className="relative h-8 w-8 rounded-full border border-blue-900/40 p-0 hover:bg-white/10"
                 >
                   <Avatar className="h-7 w-7">
                     <AvatarFallback className="bg-primary/20 text-primary text-xs font-semibold">
@@ -325,8 +330,8 @@ export function StudentAppShell({ children, user }: StudentAppShellProps) {
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 bg-[#111827] border-border text-foreground">
-                <div className="flex items-center gap-2 p-2 border-b border-border/70">
+              <DropdownMenuContent align="end" className="w-56 bg-[#0A1227] border-blue-900/40 text-foreground">
+                <div className="flex items-center gap-2 p-2 border-b border-blue-950/80">
                   <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/20 text-primary font-bold text-xs">
                     {userInitials}
                   </div>
@@ -355,10 +360,10 @@ export function StudentAppShell({ children, user }: StudentAppShellProps) {
                   </Link>
                 </DropdownMenuItem>
 
-                <DropdownMenuSeparator className="bg-border/70" />
+                <DropdownMenuSeparator className="bg-blue-950/80" />
 
                 <DropdownMenuItem
-                  onClick={() => signOut({ callbackUrl: "/login" })}
+                  onClick={handleLogout}
                   className="flex items-center gap-2 text-xs py-2 text-destructive cursor-pointer hover:bg-destructive/10"
                 >
                   <LogOut className="h-3.5 w-3.5" />

@@ -96,35 +96,35 @@ export default function AcadProfilePage() {
   }
 
   return (
-    <div className="max-w-2xl space-y-6 p-6">
+    <div className="max-w-3xl space-y-6">
       {/* Header */}
-      <div>
-        <div className="flex items-center gap-2">
-          <User className="h-5 w-5 text-primary" />
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            Academician Profile & Onboarding
-          </h1>
+      <div className="border-b border-blue-950/60 pb-4">
+        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
+          <User className="h-3.5 w-3.5" />
+          <span>Academician Portal · Faculty Credentials</span>
         </div>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Maintain your academic credentials, departmental affiliation, and
-          research expertise.
+        <h1 className="text-2xl font-bold tracking-tight text-white mt-1">
+          Faculty Profile & Research Expertise
+        </h1>
+        <p className="text-xs text-foreground-muted mt-0.5">
+          Maintain your verified institutional affiliation, departmental background, and areas of research for FDP and industry consultancy evaluations.
         </p>
       </div>
 
       {loading ? (
-        <div className="space-y-4 rounded-md border border-border bg-card p-6">
-          <Skeleton className="h-6 w-1/3" />
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-20 w-full" />
+        <div className="space-y-4 rounded-lg border border-blue-900/30 bg-[#0C1427] p-6">
+          <Skeleton className="h-6 w-1/3 bg-white/5" />
+          <Skeleton className="h-10 w-full bg-white/5" />
+          <Skeleton className="h-10 w-full bg-white/5" />
+          <Skeleton className="h-20 w-full bg-white/5" />
         </div>
       ) : (
-        <div className="rounded-md border border-border bg-card p-6 shadow-sm">
+        <div className="rounded-lg border border-blue-900/30 bg-[#0C1427] p-6 shadow-sm">
           {message && (
             <div
-              className={`mb-5 flex items-center gap-2 rounded-sm border p-3 text-xs ${
+              className={`mb-5 flex items-center gap-2 rounded-md border p-3 text-xs ${
                 message.success
-                  ? "border-success/30 bg-success/10 text-success"
+                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
                   : "border-destructive/30 bg-destructive/10 text-destructive"
               }`}
             >
@@ -139,11 +139,12 @@ export default function AcadProfilePage() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="acad-name">Full Name</Label>
+              <Label htmlFor="acad-name" className="text-xs font-semibold text-white">Full Name & Title</Label>
               <Input
                 id="acad-name"
                 {...register("name")}
                 placeholder="Dr. Priya Sharma"
+                className="h-9 bg-[#060A14] border-blue-950/60 text-xs text-white placeholder:text-foreground-subtle focus:border-primary"
               />
               {errors.name && (
                 <p className="text-xs text-destructive">
@@ -153,30 +154,29 @@ export default function AcadProfilePage() {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="acad-email">Email Address</Label>
+              <Label htmlFor="acad-email" className="text-xs font-semibold text-white">Institutional Email Address</Label>
               <Input
                 id="acad-email"
                 value={profile?.email || ""}
                 disabled
-                className="bg-muted"
+                className="h-9 bg-[#060A14]/50 border-blue-950/40 text-xs text-foreground-muted"
               />
-              <p className="text-[11px] text-muted-foreground">
-                Email is tied to your institutional account.
+              <p className="text-[11px] text-foreground-subtle">
+                Email is tied to your verified university credentials.
               </p>
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label htmlFor="acad-institution">
+                <Label htmlFor="acad-institution" className="text-xs font-semibold text-white">
                   Institution / University
                 </Label>
-                <div className="relative">
-                  <Input
-                    id="acad-institution"
-                    {...register("institution")}
-                    placeholder="All India Institute of Ayurveda"
-                  />
-                </div>
+                <Input
+                  id="acad-institution"
+                  {...register("institution")}
+                  placeholder="All India Institute of Ayurveda / IIT"
+                  className="h-9 bg-[#060A14] border-blue-950/60 text-xs text-white placeholder:text-foreground-subtle focus:border-primary"
+                />
                 {errors.institution && (
                   <p className="text-xs text-destructive">
                     {errors.institution.message}
@@ -185,14 +185,13 @@ export default function AcadProfilePage() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="acad-dept">Department</Label>
-                <div className="relative">
-                  <Input
-                    id="acad-dept"
-                    {...register("department")}
-                    placeholder="Dravyaguna / Computer Science"
-                  />
-                </div>
+                <Label htmlFor="acad-dept" className="text-xs font-semibold text-white">Department</Label>
+                <Input
+                  id="acad-dept"
+                  {...register("department")}
+                  placeholder="Computer Science / Dravyaguna"
+                  className="h-9 bg-[#060A14] border-blue-950/60 text-xs text-white placeholder:text-foreground-subtle focus:border-primary"
+                />
                 {errors.department && (
                   <p className="text-xs text-destructive">
                     {errors.department.message}
@@ -202,35 +201,39 @@ export default function AcadProfilePage() {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="acad-expertise">
+              <Label htmlFor="acad-expertise" className="text-xs font-semibold text-white">
                 Areas of Research & Teaching Expertise
               </Label>
               <Textarea
                 id="acad-expertise"
                 rows={4}
                 {...register("expertise")}
-                placeholder="e.g. Ayurvedic Pharmacology, Medicinal Plant Research, Clinical Ayurveda, Phytochemistry"
+                placeholder="e.g. Distributed Computing, Deep Learning, Cloud Architectures, AYUSH Clinical Pharmacology"
+                className="bg-[#060A14] border-blue-950/60 text-xs text-white placeholder:text-foreground-subtle focus:border-primary"
               />
               {errors.expertise && (
                 <p className="text-xs text-destructive">
                   {errors.expertise.message}
                 </p>
               )}
-              <p className="text-[11px] text-muted-foreground">
-                Free-text expertise description surfaced during FDP and
-                consultancy evaluations.
+              <p className="text-[11px] text-foreground-subtle">
+                Keywords and research domain summaries are matched against industry consultancy requirements.
               </p>
             </div>
 
-            <div className="pt-2">
-              <Button type="submit" disabled={saving}>
+            <div className="pt-2 flex justify-end">
+              <Button
+                type="submit"
+                disabled={saving}
+                className="h-9 bg-primary px-5 text-xs font-semibold text-white hover:bg-primary-hover shadow-xs"
+              >
                 {saving ? (
                   <span className="flex items-center gap-2">
-                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
-                    Saving Changes…
+                    <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    Saving Changes...
                   </span>
                 ) : (
-                  "Save Profile"
+                  "Save Faculty Profile"
                 )}
               </Button>
             </div>

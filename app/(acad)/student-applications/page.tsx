@@ -84,19 +84,28 @@ export default function AcadApplicationsPage() {
   }, []);
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6">
       {/* Header */}
-      <div>
-        <div className="flex items-center gap-2">
-          <FileText className="h-5 w-5 text-primary" />
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-blue-950/60 pb-4">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
+            <FileText className="h-3.5 w-3.5" />
+            <span>Academician Portal · Status Pipeline</span>
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-white mt-1">
             My Applications Tracker
           </h1>
+          <p className="text-xs text-foreground-muted mt-0.5">
+            Track real-time status of your faculty applications for FDP, consultancy assignments, and research programs.
+          </p>
         </div>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Track the live review status of your applications for Faculty
-          Development Programs, consultancy, and collaborative research.
-        </p>
+
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400">
+            <FileText className="h-3.5 w-3.5" />
+            {applications.length} Submitted Applications
+          </span>
+        </div>
       </div>
 
       {/* Applications List */}
@@ -105,22 +114,22 @@ export default function AcadApplicationsPage() {
           {[1, 2].map((i) => (
             <div
               key={i}
-              className="rounded-md border border-border bg-card p-5"
+              className="rounded-lg border border-blue-900/30 bg-[#0C1427] p-5 space-y-3"
             >
-              <Skeleton className="h-5 w-1/3" />
-              <Skeleton className="mt-2 h-4 w-1/4" />
-              <Skeleton className="mt-3 h-10 w-full" />
+              <Skeleton className="h-5 w-1/3 bg-white/5" />
+              <Skeleton className="mt-2 h-4 w-1/4 bg-white/5" />
+              <Skeleton className="mt-3 h-10 w-full bg-white/5" />
             </div>
           ))}
         </div>
       ) : applications.length === 0 ? (
-        <div className="flex h-64 flex-col items-center justify-center rounded-md border border-dashed border-border bg-card p-6 text-center">
-          <FileText className="h-8 w-8 text-muted-foreground" />
-          <p className="mt-2 text-sm font-semibold text-foreground">
+        <div className="flex h-64 flex-col items-center justify-center rounded-lg border border-dashed border-blue-900/40 bg-[#0A1227] p-6 text-center">
+          <FileText className="h-8 w-8 text-foreground-subtle mb-2" />
+          <p className="text-sm font-semibold text-white">
             No applications submitted yet
           </p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Explore active opportunities and submit your academic profile.
+          <p className="mt-1 text-xs text-foreground-muted">
+            Explore active faculty opportunities and submit your credentials.
           </p>
         </div>
       ) : (
@@ -134,16 +143,16 @@ export default function AcadApplicationsPage() {
             return (
               <div
                 key={app.id}
-                className="rounded-md border border-border bg-card p-5 shadow-sm transition-colors duration-150 ease-in-out"
+                className="rounded-lg border border-blue-900/30 bg-[#0C1427] p-5 transition-all duration-150 hover:border-blue-500/40 hover:shadow-md space-y-3"
               >
-                <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
+                <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
                   <div>
-                    <h2 className="text-base font-semibold text-foreground">
+                    <h2 className="text-base font-bold text-white">
                       {app.opportunity.title}
                     </h2>
-                    <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-                      <Building className="h-3.5 w-3.5" />
-                      <span>
+                    <div className="mt-1.5 flex items-center gap-2 text-xs text-foreground-muted">
+                      <Building className="h-3.5 w-3.5 text-primary" />
+                      <span className="text-white font-medium">
                         {app.opportunity.postedBy.institution ||
                           app.opportunity.postedBy.name}
                       </span>
@@ -151,35 +160,35 @@ export default function AcadApplicationsPage() {
                   </div>
 
                   <span
-                    className={`inline-flex items-center rounded-sm border px-2.5 py-1 text-xs font-semibold ${statusConfig.className}`}
+                    className={`inline-flex items-center rounded-md border px-2.5 py-1 text-xs font-semibold ${statusConfig.className}`}
                   >
                     {statusConfig.label}
                   </span>
                 </div>
 
-                <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+                <div className="flex flex-wrap items-center gap-4 pt-2 border-t border-blue-950/60 text-xs text-foreground-muted">
                   {app.opportunity.location && (
-                    <div className="flex items-center gap-1">
-                      <MapPin className="h-3.5 w-3.5" />
+                    <div className="flex items-center gap-1.5">
+                      <MapPin className="h-3.5 w-3.5 text-primary" />
                       <span>{app.opportunity.location}</span>
                     </div>
                   )}
                   {app.opportunity.duration && (
-                    <div className="flex items-center gap-1">
-                      <Clock className="h-3.5 w-3.5" />
+                    <div className="flex items-center gap-1.5">
+                      <Clock className="h-3.5 w-3.5 text-indigo-400" />
                       <span>{app.opportunity.duration}</span>
                     </div>
                   )}
                   {app.opportunity.stipendRange && (
-                    <div className="flex items-center gap-1">
-                      <IndianRupee className="h-3.5 w-3.5" />
+                    <div className="flex items-center gap-1.5">
+                      <IndianRupee className="h-3.5 w-3.5 text-emerald-400" />
                       <span>{app.opportunity.stipendRange}</span>
                     </div>
                   )}
-                  <div className="flex items-center gap-1">
-                    <Calendar className="h-3.5 w-3.5" />
+                  <div className="flex items-center gap-1.5 ml-auto">
+                    <Calendar className="h-3.5 w-3.5 text-amber-400" />
                     <span>
-                      Applied on: {new Date(app.appliedAt).toLocaleDateString()}
+                      Applied: {new Date(app.appliedAt).toLocaleDateString()}
                     </span>
                   </div>
                 </div>

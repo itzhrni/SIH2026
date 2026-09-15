@@ -1,33 +1,18 @@
-import { AppShell } from "@/components/layout/AppShell";
-import { Briefcase, FileText, User } from "lucide-react";
-import type { NavItem } from "@/components/layout/AppShell";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import { nextAuthConfig } from "@/lib/auth/next-auth-config";
+import { AcadAppShell } from "@/components/acad/AcadAppShell";
 
-const navItems: NavItem[] = [
-  {
-    label: "Opportunity Feed",
-    href: "/acad/opportunity-feed",
-    icon: Briefcase,
-  },
-  {
-    label: "Student Applications",
-    href: "/acad/student-applications",
-    icon: FileText,
-  },
-  { label: "Profile", href: "/acad/profile", icon: User },
-];
-
-export default function AcadLayout({
+export default async function AcadLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <AppShell
-      title="Academician Portal"
-      subtitle="Academician"
-      navItems={navItems}
-    >
-      {children}
-    </AppShell>
-  );
+  const session = await getServerSession(nextAuthConfig);
+  if (!session || !session.user) {
+    redirect("/login");
+  }
+
+  return <AcadAppShell user={session.user}>{children}</AcadAppShell>;
 }
+

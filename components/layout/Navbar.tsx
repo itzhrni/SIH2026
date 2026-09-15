@@ -99,8 +99,9 @@ export default function Navbar({ user }: NavbarProps) {
   else if (role === "ACADEMICIAN") navItems = acadNavItems;
   else if (role === "INSTITUTIONAL_ADMIN") navItems = adminNavItems;
 
-  const handleLogout = () => {
-    signOut({ callbackUrl: "/" });
+  const handleLogout = async () => {
+    await signOut({ redirect: false });
+    window.location.href = "/login";
   };
 
   const getInitials = (name?: string | null) => {

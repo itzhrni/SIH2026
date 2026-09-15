@@ -15,6 +15,7 @@ import {
   Search,
   CheckCircle2,
   AlertCircle,
+  Sparkles,
 } from "lucide-react";
 import type { ApiResponse } from "@/types";
 
@@ -131,48 +132,58 @@ export default function AcadOpportunitiesPage() {
   });
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6">
       {/* Header */}
-      <div>
-        <div className="flex items-center gap-2">
-          <Briefcase className="h-5 w-5 text-primary" />
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            Academician Opportunities
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-blue-950/60 pb-4">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>Academician Portal · Programs & Collabs</span>
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-white mt-1">
+            Faculty & Academician Opportunities
           </h1>
+          <p className="text-xs text-foreground-muted mt-0.5">
+            Explore industry-sponsored Faculty Development Programs (FDP), consultancy engagements, research collaborations, and joint curriculum initiatives.
+          </p>
         </div>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Browse industry-sponsored Faculty Development Programs (FDP),
-          consultancy opportunities, faculty internships, and collaborative
-          research projects.
-        </p>
+
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400">
+            <Building className="h-3.5 w-3.5" />
+            {opportunities.length} Active Industry Programs
+          </span>
+        </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap gap-1.5">
-          {ACAD_TYPES.map((type) => (
-            <button
-              key={type}
-              onClick={() => setSelectedType(type)}
-              className={`rounded-sm px-3 py-1.5 text-xs font-medium transition-colors duration-150 ease-in-out ${
-                selectedType === type
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
-              }`}
-            >
-              {type === "ALL" ? "All Opportunities" : TYPE_LABELS[type] || type}
-            </button>
-          ))}
-        </div>
+      <div className="rounded-lg border border-blue-900/30 bg-[#0A1227] p-3.5 space-y-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap gap-1.5">
+            {ACAD_TYPES.map((type) => (
+              <button
+                key={type}
+                onClick={() => setSelectedType(type)}
+                className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors duration-150 ${
+                  selectedType === type
+                    ? "bg-primary text-white font-semibold shadow-xs"
+                    : "bg-[#060A14] text-foreground-muted hover:bg-white/5 hover:text-white border border-blue-950/60"
+                }`}
+              >
+                {type === "ALL" ? "All Programs" : TYPE_LABELS[type] || type}
+              </button>
+            ))}
+          </div>
 
-        <div className="relative w-full sm:w-64">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search opportunities..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-8 text-sm"
-          />
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-foreground-muted" />
+            <Input
+              placeholder="Search programs..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="h-8 pl-8 text-xs bg-[#060A14] border-blue-950/60 text-white placeholder:text-foreground-subtle focus:border-primary"
+            />
+          </div>
         </div>
       </div>
 
@@ -182,22 +193,22 @@ export default function AcadOpportunitiesPage() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="rounded-md border border-border bg-card p-5"
+              className="rounded-lg border border-blue-900/30 bg-[#0C1427] p-5 space-y-3"
             >
-              <Skeleton className="h-6 w-1/3" />
-              <Skeleton className="mt-2 h-4 w-1/4" />
-              <Skeleton className="mt-4 h-16 w-full" />
+              <Skeleton className="h-6 w-1/3 bg-white/5" />
+              <Skeleton className="h-4 w-1/4 bg-white/5" />
+              <Skeleton className="h-16 w-full bg-white/5" />
             </div>
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="flex h-64 flex-col items-center justify-center rounded-md border border-dashed border-border bg-card p-6 text-center">
-          <Briefcase className="h-8 w-8 text-muted-foreground" />
-          <p className="mt-2 text-sm font-semibold text-foreground">
-            No opportunities found
+        <div className="flex h-64 flex-col items-center justify-center rounded-lg border border-dashed border-blue-900/40 bg-[#0A1227] p-6 text-center">
+          <Briefcase className="h-8 w-8 text-foreground-subtle mb-2" />
+          <p className="text-sm font-semibold text-white">
+            No opportunities match your filter
           </p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Try adjusting your search criteria or filter type.
+          <p className="mt-1 text-xs text-foreground-muted">
+            Try selecting "All Programs" or clearing your search keywords.
           </p>
         </div>
       ) : (
@@ -205,24 +216,21 @@ export default function AcadOpportunitiesPage() {
           {filtered.map((item) => (
             <div
               key={item.id}
-              className="rounded-md border border-border bg-card p-5 shadow-sm transition-colors duration-150 ease-in-out"
+              className="rounded-lg border border-blue-900/30 bg-[#0C1427] p-5 transition-all duration-150 hover:border-blue-500/40 hover:shadow-md space-y-3"
             >
-              <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
+              <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="text-base font-semibold text-foreground">
+                    <h2 className="text-base font-bold text-white">
                       {item.title}
                     </h2>
-                    <Badge
-                      variant="secondary"
-                      className="rounded-sm text-[10px]"
-                    >
+                    <span className="rounded bg-blue-500/20 text-blue-400 border border-blue-500/30 px-2 py-0.5 text-[11px] font-semibold">
                       {TYPE_LABELS[item.type] || item.type}
-                    </Badge>
+                    </span>
                   </div>
-                  <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <Building className="h-3.5 w-3.5" />
-                    <span>
+                  <div className="mt-1.5 flex items-center gap-2 text-xs text-foreground-muted">
+                    <Building className="h-3.5 w-3.5 text-primary" />
+                    <span className="text-white font-medium">
                       {item.postedBy.institution || item.postedBy.name}
                     </span>
                   </div>
@@ -232,44 +240,45 @@ export default function AcadOpportunitiesPage() {
                   size="sm"
                   onClick={() => handleApply(item.id)}
                   disabled={applyingId === item.id}
+                  className="h-8 gap-1.5 bg-primary px-4 text-xs font-semibold text-white hover:bg-primary-hover shadow-xs shrink-0"
                 >
                   {applyingId === item.id ? (
                     <span className="flex items-center gap-1.5">
-                      <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
-                      Applying…
+                      <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      Applying...
                     </span>
                   ) : (
-                    "Apply with Academic Profile"
+                    "Apply with Faculty Profile"
                   )}
                 </Button>
               </div>
 
-              <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+              <p className="text-xs leading-relaxed text-foreground-muted">
                 {item.description}
               </p>
 
               {/* Meta details */}
-              <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-4 pt-2 border-t border-blue-950/60 text-xs text-foreground-muted">
                 {item.location && (
-                  <div className="flex items-center gap-1">
-                    <MapPin className="h-3.5 w-3.5" />
+                  <div className="flex items-center gap-1.5">
+                    <MapPin className="h-3.5 w-3.5 text-primary" />
                     <span>{item.location}</span>
                   </div>
                 )}
                 {item.duration && (
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-3.5 w-3.5" />
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="h-3.5 w-3.5 text-indigo-400" />
                     <span>{item.duration}</span>
                   </div>
                 )}
                 {item.stipendRange && (
-                  <div className="flex items-center gap-1">
-                    <IndianRupee className="h-3.5 w-3.5" />
+                  <div className="flex items-center gap-1.5">
+                    <IndianRupee className="h-3.5 w-3.5 text-emerald-400" />
                     <span>{item.stipendRange}</span>
                   </div>
                 )}
-                <div className="flex items-center gap-1">
-                  <Calendar className="h-3.5 w-3.5" />
+                <div className="flex items-center gap-1.5 ml-auto">
+                  <Calendar className="h-3.5 w-3.5 text-amber-400" />
                   <span>
                     Deadline: {new Date(item.deadline).toLocaleDateString()}
                   </span>
@@ -279,9 +288,9 @@ export default function AcadOpportunitiesPage() {
               {/* Feedback alert */}
               {feedback && feedback.id === item.id && (
                 <div
-                  className={`mt-3 flex items-center gap-2 rounded-sm border p-2.5 text-xs ${
+                  className={`mt-2 flex items-center gap-2 rounded-md border p-2.5 text-xs ${
                     feedback.success
-                      ? "border-success/30 bg-success/10 text-success"
+                      ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
                       : "border-destructive/30 bg-destructive/10 text-destructive"
                   }`}
                 >

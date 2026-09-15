@@ -159,7 +159,7 @@ export default async function StudentDashboardPage() {
             <Button
               variant="outline"
               size="sm"
-              className="h-8 gap-1.5 border-border bg-[#0E131F] text-xs font-medium hover:bg-white/5"
+              className="h-8 gap-1.5 border-blue-900/40 bg-[#0C1427] text-xs font-medium text-white hover:bg-white/5"
             >
               <BookOpen className="h-3.5 w-3.5 text-primary" />
               <span>In-Portal Courses</span>
@@ -178,7 +178,7 @@ export default async function StudentDashboardPage() {
       </div>
 
       {/* 2. NEXT BEST ACTION (Prominent, purposeful guidance card) */}
-      <div className="relative overflow-hidden rounded-lg border border-primary/30 bg-gradient-to-r from-blue-950/40 via-[#0E131F] to-[#0E131F] p-4 sm:p-5">
+      <div className="relative overflow-hidden rounded-lg border border-blue-500/40 bg-gradient-to-r from-blue-950/70 via-[#0C1427] to-[#0A1227] p-4 sm:p-5 shadow-sm">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-start gap-3 min-w-0">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/20 text-primary border border-primary/30">
@@ -220,7 +220,7 @@ export default async function StudentDashboardPage() {
       {/* 3. YOUR SKILL SNAPSHOT: 4 Purposeful Metric Blocks */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {/* Metric 1 */}
-        <div className="rounded-lg border border-border bg-[#0E131F] p-3.5 transition-colors hover:border-primary/30">
+        <div className="rounded-lg border border-blue-900/30 bg-[#0C1427] p-3.5 transition-all duration-150 hover:border-blue-500/40">
           <div className="flex items-center justify-between text-foreground-muted">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground-subtle">
               Avg Verified Score
@@ -241,7 +241,7 @@ export default async function StudentDashboardPage() {
         </div>
 
         {/* Metric 2 */}
-        <div className="rounded-lg border border-border bg-[#0E131F] p-3.5 transition-colors hover:border-primary/30">
+        <div className="rounded-lg border border-blue-900/30 bg-[#0C1427] p-3.5 transition-all duration-150 hover:border-blue-500/40">
           <div className="flex items-center justify-between text-foreground-muted">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground-subtle">
               Domains Evaluated
@@ -260,7 +260,7 @@ export default async function StudentDashboardPage() {
         </div>
 
         {/* Metric 3 */}
-        <div className="rounded-lg border border-border bg-[#0E131F] p-3.5 transition-colors hover:border-primary/30">
+        <div className="rounded-lg border border-blue-900/30 bg-[#0C1427] p-3.5 transition-all duration-150 hover:border-blue-500/40">
           <div className="flex items-center justify-between text-foreground-muted">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground-subtle">
               Verified Badges
@@ -279,7 +279,7 @@ export default async function StudentDashboardPage() {
         </div>
 
         {/* Metric 4 */}
-        <div className="rounded-lg border border-border bg-[#0E131F] p-3.5 transition-colors hover:border-primary/30">
+        <div className="rounded-lg border border-blue-900/30 bg-[#0C1427] p-3.5 transition-all duration-150 hover:border-blue-500/40">
           <div className="flex items-center justify-between text-foreground-muted">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground-subtle">
               Applications
@@ -303,8 +303,8 @@ export default async function StudentDashboardPage() {
         {/* Left 2/3: Opportunities & Role Matching */}
         <div className="space-y-4 lg:col-span-2">
           {/* Top Matched Opportunities */}
-          <div className="rounded-lg border border-border bg-[#0B0F17] p-4 space-y-3">
-            <div className="flex items-center justify-between border-b border-border/80 pb-3">
+          <div className="rounded-lg border border-blue-900/30 bg-[#0A1227] p-4 space-y-3">
+            <div className="flex items-center justify-between border-b border-blue-950/80 pb-3">
               <div>
                 <h2 className="text-sm font-semibold text-white uppercase tracking-wider">
                   Top Matched Opportunities
@@ -342,8 +342,8 @@ export default async function StudentDashboardPage() {
 
           {/* Career Guidance Compatibility */}
           {roleMatches.length > 0 && (
-            <div className="rounded-lg border border-border bg-[#0B0F17] p-4 space-y-3">
-              <div className="border-b border-border/80 pb-2">
+            <div className="rounded-lg border border-blue-900/30 bg-[#0A1227] p-4 space-y-3">
+              <div className="border-b border-blue-950/80 pb-2">
                 <h2 className="text-sm font-semibold text-white uppercase tracking-wider">
                   Target Role Alignment
                 </h2>
@@ -356,7 +356,7 @@ export default async function StudentDashboardPage() {
                 {roleMatches.map((role) => (
                   <div
                     key={role.roleId}
-                    className="rounded-lg border border-border bg-[#0E131F] p-3 space-y-2"
+                    className="rounded-lg border border-blue-900/30 bg-[#0C1427] p-3 space-y-2"
                   >
                     <div className="flex items-center justify-between">
                       <h3 className="text-xs font-semibold text-white">
@@ -394,8 +394,8 @@ export default async function StudentDashboardPage() {
         {/* Right 1/3: Badges, Latest Assessment & In-Portal Courses */}
         <div className="space-y-4">
           {/* Verified Badges Snapshot */}
-          <div className="rounded-lg border border-border bg-[#0B0F17] p-4 space-y-3">
-            <div className="flex items-center justify-between border-b border-border/80 pb-2">
+          <div className="rounded-lg border border-blue-900/30 bg-[#0A1227] p-4 space-y-3">
+            <div className="flex items-center justify-between border-b border-blue-950/80 pb-2">
               <h2 className="text-xs font-semibold uppercase tracking-wider text-white">
                 Verified Badges
               </h2>
@@ -422,8 +422,8 @@ export default async function StudentDashboardPage() {
           </div>
 
           {/* Recent Gap Report Summary */}
-          <div className="rounded-lg border border-border bg-[#0B0F17] p-4 space-y-3">
-            <div className="flex items-center justify-between border-b border-border/80 pb-2">
+          <div className="rounded-lg border border-blue-900/30 bg-[#0A1227] p-4 space-y-3">
+            <div className="flex items-center justify-between border-b border-blue-950/80 pb-2">
               <h2 className="text-xs font-semibold uppercase tracking-wider text-white">
                 Latest 4D Evaluation
               </h2>
@@ -466,7 +466,7 @@ export default async function StudentDashboardPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full text-xs h-7 border-border bg-[#0E131F] hover:bg-white/5"
+                    className="w-full text-xs h-7 border-blue-900/40 bg-[#0C1427] hover:bg-white/5 text-white"
                   >
                     Review 4D Gap Report
                   </Button>
@@ -490,7 +490,7 @@ export default async function StudentDashboardPage() {
           </div>
 
           {/* In-Portal Courses Spotlight */}
-          <div className="rounded-lg border border-border bg-[#0E131F] p-4 space-y-2.5">
+          <div className="rounded-lg border border-blue-900/30 bg-[#0C1427] p-4 space-y-2.5">
             <div className="flex items-center gap-2">
               <GraduationCap className="h-4 w-4 text-primary" />
               <h2 className="text-xs font-semibold text-white uppercase tracking-wider">

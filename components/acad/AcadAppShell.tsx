@@ -5,23 +5,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import {
-  LayoutDashboard,
-  PlusCircle,
   Briefcase,
-  ClipboardList,
-  Layers,
-  Users,
-  Building2,
-  LogOut,
+  FileText,
+  User,
+  GraduationCap,
   ChevronLeft,
   ChevronRight,
   Menu,
   X,
   Search,
-  Sparkles,
-  ShieldCheck,
-  User,
-  Settings,
+  LogOut,
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -33,44 +26,54 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export interface IndustryUser {
+export interface AcadUser {
   id?: string;
   name?: string | null;
   email?: string | null;
   institution?: string | null;
+  department?: string | null;
   role?: string | null;
 }
 
-interface IndustryAppShellProps {
+interface AcadAppShellProps {
   children: React.ReactNode;
-  user: IndustryUser;
+  user: AcadUser;
 }
 
 const NAV_GROUPS = [
   {
-    title: "Overview",
+    title: "Programs & Opportunities",
     items: [
-      { label: "Dashboard", href: "/industry/recruiter-dashboard", icon: LayoutDashboard },
+      {
+        label: "Opportunity Feed",
+        href: "/acad/opportunity-feed",
+        icon: Briefcase,
+      },
     ],
   },
   {
-    title: "Post & Manage",
+    title: "Applications & Tracking",
     items: [
-      { label: "Post Internship", href: "/industry/post/internship", icon: PlusCircle },
-      { label: "Post Job", href: "/industry/post/job", icon: Briefcase },
-      { label: "My Postings", href: "/industry/my-postings", icon: ClipboardList },
+      {
+        label: "My Applications",
+        href: "/acad/student-applications",
+        icon: FileText,
+      },
     ],
   },
   {
-    title: "Candidate Recruitment",
+    title: "Account & Credentials",
     items: [
-      { label: "Hiring Pipelines", href: "/industry/pipeline", icon: Layers },
-      { label: "Discover Candidates", href: "/industry/candidates", icon: Users },
+      {
+        label: "Faculty Profile",
+        href: "/acad/acad-profile",
+        icon: User,
+      },
     ],
   },
 ];
 
-export function IndustryAppShell({ children, user }: IndustryAppShellProps) {
+export function AcadAppShell({ children, user }: AcadAppShellProps) {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -80,15 +83,15 @@ export function IndustryAppShell({ children, user }: IndustryAppShellProps) {
     setIsMobileOpen(false);
   }, [pathname]);
 
-  const userName = user?.name || "Recruiter";
-  const companyName = user?.institution || "Industry Partner";
+  const userName = user?.name || "Dr. Academician";
+  const institutionName = user?.institution || "Academic Institution";
   const userInitials =
     userName
       .split(" ")
       .map((n) => n[0])
       .join("")
       .substring(0, 2)
-      .toUpperCase() || "RC";
+      .toUpperCase() || "AC";
 
   const handleLogout = async () => {
     await signOut({ redirect: false });
@@ -96,16 +99,13 @@ export function IndustryAppShell({ children, user }: IndustryAppShellProps) {
   };
 
   const getPageInfo = () => {
-    if (pathname.includes("recruiter-dashboard") || pathname === "/industry" || pathname === "/industry/dashboard")
-      return { title: "Recruiter Dashboard", category: "Overview" };
-    if (pathname.includes("post/internship")) return { title: "Post Internship", category: "Postings" };
-    if (pathname.includes("post/job")) return { title: "Post Job", category: "Postings" };
-    if (pathname.includes("my-postings") || pathname.includes("opportunities"))
-      return { title: "Opportunity Postings", category: "Management" };
-    if (pathname.includes("pipeline")) return { title: "Candidate Pipelines", category: "Recruitment" };
-    if (pathname.includes("candidates") || pathname.includes("discover"))
-      return { title: "Candidate Discovery", category: "Recruitment" };
-    return { title: "Industry Portal", category: "Recruitment" };
+    if (pathname.includes("opportunity-feed"))
+      return { title: "Opportunity Feed", category: "Programs & FDP" };
+    if (pathname.includes("student-applications"))
+      return { title: "My Applications", category: "Tracking" };
+    if (pathname.includes("acad-profile") || pathname.includes("profile"))
+      return { title: "Faculty Profile", category: "Account" };
+    return { title: "Academician Portal", category: "Academician" };
   };
 
   const pageInfo = getPageInfo();
@@ -123,16 +123,18 @@ export function IndustryAppShell({ children, user }: IndustryAppShellProps) {
       {/* PRIMARY NAVIGATION: Collapsible Left Sidebar */}
       <aside
         className={`fixed top-0 bottom-0 left-0 z-50 flex flex-col border-r border-blue-950/40 bg-[#080E1C] transition-all duration-200 ease-in-out lg:translate-x-0 ${
-          isMobileOpen ? "translate-x-0 w-64 shadow-2xl" : "-translate-x-full lg:translate-x-0"
+          isMobileOpen
+            ? "translate-x-0 w-64 shadow-2xl"
+            : "-translate-x-full lg:translate-x-0"
         } ${isCollapsed ? "lg:w-[72px]" : "lg:w-60"}`}
       >
         {/* Brand Header */}
         <div className="flex h-14 items-center justify-between border-b border-blue-950/60 px-3.5">
           <Link
-            href="/industry/recruiter-dashboard"
+            href="/acad/opportunity-feed"
             className="flex items-center gap-2.5 overflow-hidden transition-opacity hover:opacity-90"
           >
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-indigo-500 to-blue-600 text-white font-bold text-xs shadow-sm">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-blue-600 to-indigo-600 text-white font-bold text-xs shadow-sm">
               SL
             </div>
             {!isCollapsed && (
@@ -141,12 +143,12 @@ export function IndustryAppShell({ children, user }: IndustryAppShellProps) {
                   <span className="text-sm font-bold tracking-tight text-white">
                     SkillLedger
                   </span>
-                  <span className="rounded bg-indigo-500/20 px-1.5 py-0.2 text-[10px] font-semibold text-indigo-400">
-                    Industry
+                  <span className="rounded bg-blue-500/20 px-1.5 py-0.2 text-[10px] font-semibold text-blue-400">
+                    Academia
                   </span>
                 </div>
                 <p className="text-[11px] text-foreground-muted truncate">
-                  {companyName}
+                  {institutionName}
                 </p>
               </div>
             )}
@@ -188,7 +190,8 @@ export function IndustryAppShell({ children, user }: IndustryAppShellProps) {
                 const Icon = item.icon;
                 const isActive =
                   pathname === item.href ||
-                  (item.href !== "/industry/recruiter-dashboard" && pathname.startsWith(item.href));
+                  (item.href !== "/acad/opportunity-feed" &&
+                    pathname.startsWith(item.href));
 
                 return (
                   <Link
@@ -208,7 +211,9 @@ export function IndustryAppShell({ children, user }: IndustryAppShellProps) {
                           : "text-foreground-muted group-hover:text-white"
                       }`}
                     />
-                    {!isCollapsed && <span className="truncate">{item.label}</span>}
+                    {!isCollapsed && (
+                      <span className="truncate">{item.label}</span>
+                    )}
                   </Link>
                 );
               })}
@@ -224,7 +229,7 @@ export function IndustryAppShell({ children, user }: IndustryAppShellProps) {
             }`}
           >
             <Avatar className="h-7 w-7 shrink-0 rounded-md border border-blue-900/40">
-              <AvatarFallback className="bg-indigo-500/20 text-indigo-400 text-[11px] font-bold">
+              <AvatarFallback className="bg-blue-500/20 text-blue-400 text-[11px] font-bold">
                 {userInitials}
               </AvatarFallback>
             </Avatar>
@@ -235,7 +240,7 @@ export function IndustryAppShell({ children, user }: IndustryAppShellProps) {
                   {userName}
                 </p>
                 <p className="text-[10px] text-foreground-muted truncate">
-                  {companyName}
+                  {institutionName}
                 </p>
               </div>
             )}
@@ -288,17 +293,17 @@ export function IndustryAppShell({ children, user }: IndustryAppShellProps) {
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-foreground-muted" />
               <input
                 type="text"
-                placeholder="Search candidates, skills... ⌘K"
+                placeholder="Search FDP, research... ⌘K"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full rounded-md border border-blue-950/60 bg-white/[0.04] py-1.5 pl-8 pr-3 text-xs text-foreground placeholder:text-foreground-subtle focus:border-primary/50 focus:bg-white/[0.07] focus:outline-none transition-colors"
               />
             </div>
 
-            {/* Recruiter Verified Status */}
-            <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-indigo-500/20 bg-indigo-500/10 px-2.5 py-0.5 text-[11px] font-medium text-indigo-400">
-              <div className="h-1.5 w-1.5 rounded-full bg-indigo-400 animate-pulse" />
-              <span>Recruiter Verified</span>
+            {/* Academician Verified Status */}
+            <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-blue-500/20 bg-blue-500/10 px-2.5 py-0.5 text-[11px] font-medium text-blue-400">
+              <GraduationCap className="h-3.5 w-3.5 text-blue-400" />
+              <span>Faculty Verified</span>
             </div>
 
             {/* User Dropdown with Logout */}
@@ -309,39 +314,55 @@ export function IndustryAppShell({ children, user }: IndustryAppShellProps) {
                   className="relative h-8 w-8 rounded-full border border-blue-900/40 p-0 hover:bg-white/10"
                 >
                   <Avatar className="h-7 w-7">
-                    <AvatarFallback className="bg-indigo-500/20 text-indigo-400 text-xs font-semibold">
+                    <AvatarFallback className="bg-blue-500/20 text-blue-400 text-xs font-semibold">
                       {userInitials}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 bg-[#0A1227] border-blue-900/40 text-foreground">
+              <DropdownMenuContent
+                align="end"
+                className="w-56 bg-[#0A1227] border-blue-900/40 text-foreground"
+              >
                 <div className="flex items-center gap-2 p-2 border-b border-blue-950/80">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-indigo-500/20 text-indigo-400 font-bold text-xs">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-blue-500/20 text-blue-400 font-bold text-xs">
                     {userInitials}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-semibold text-white truncate">{userName}</p>
-                    <p className="text-[10px] text-foreground-muted truncate">{companyName}</p>
+                    <p className="text-xs font-semibold text-white truncate">
+                      {userName}
+                    </p>
+                    <p className="text-[10px] text-foreground-muted truncate">
+                      {institutionName}
+                    </p>
                   </div>
                 </div>
 
                 <DropdownMenuItem asChild>
-                  <Link href="/industry/my-postings" className="flex items-center gap-2 text-xs py-2 cursor-pointer">
-                    <ClipboardList className="h-3.5 w-3.5 text-foreground-muted" />
-                    <span>My Postings</span>
+                  <Link
+                    href="/acad/opportunity-feed"
+                    className="flex items-center gap-2 text-xs py-2 cursor-pointer"
+                  >
+                    <Briefcase className="h-3.5 w-3.5 text-foreground-muted" />
+                    <span>Opportunity Feed</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/industry/post/internship" className="flex items-center gap-2 text-xs py-2 cursor-pointer">
-                    <PlusCircle className="h-3.5 w-3.5 text-foreground-muted" />
-                    <span>Post Internship</span>
+                  <Link
+                    href="/acad/student-applications"
+                    className="flex items-center gap-2 text-xs py-2 cursor-pointer"
+                  >
+                    <FileText className="h-3.5 w-3.5 text-foreground-muted" />
+                    <span>My Applications</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/industry/candidates" className="flex items-center gap-2 text-xs py-2 cursor-pointer">
-                    <Users className="h-3.5 w-3.5 text-foreground-muted" />
-                    <span>Discover Candidates</span>
+                  <Link
+                    href="/acad/acad-profile"
+                    className="flex items-center gap-2 text-xs py-2 cursor-pointer"
+                  >
+                    <User className="h-3.5 w-3.5 text-foreground-muted" />
+                    <span>Faculty Profile</span>
                   </Link>
                 </DropdownMenuItem>
 
