@@ -9,6 +9,18 @@ import { QuestionCard } from "@/components/assessment/QuestionCard";
 import { ResponseInput } from "@/components/assessment/ResponseInput";
 import { GapReport } from "@/components/assessment/GapReport";
 import type { GapReportData } from "@/types";
+import {
+  BrainCircuit,
+  Zap,
+  CheckCircle2,
+  AlertTriangle,
+  Flame,
+  Layers,
+  ArrowRight,
+  ShieldCheck,
+  Activity,
+  Sliders,
+} from "lucide-react";
 
 interface AssessmentTerminalProps {
   sessionId: string;
@@ -112,13 +124,15 @@ export function AssessmentTerminal({
   if (isComplete) {
     if (reportLoading || !gapReport) {
       return (
-        <div className="mx-auto max-w-2xl px-4 py-16 text-center space-y-3">
-          <p className="text-lg font-semibold text-foreground">
-            Analyzing Assessment Performance
-          </p>
-          <p className="text-sm text-foreground-muted">
-            Generating conceptual gap report and updating your verified
-            SkillLedger profile...
+        <div className="mx-auto max-w-2xl px-4 py-16 text-center space-y-4">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/20 text-primary mx-auto animate-pulse">
+            <BrainCircuit className="h-6 w-6" />
+          </div>
+          <h2 className="text-xl font-bold text-white">
+            Computing 4-Dimensional Skill Ledger
+          </h2>
+          <p className="text-xs text-foreground-muted max-w-md mx-auto">
+            Aggregating Correctness, Mechanical Depth, Trade-Off Awareness, and Real-World Production Applicability...
           </p>
         </div>
       );
@@ -128,40 +142,72 @@ export function AssessmentTerminal({
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8 space-y-4">
-      {/* Session header */}
-      <div className="mb-4">
-        <div className="flex items-center justify-between mb-3">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-foreground-subtle">
-              Assessment · {domain.toUpperCase()}
-            </p>
-            <h1 className="text-2xl font-semibold text-foreground mt-0.5">
-              Question {turnIndex + 1}
-            </h1>
+    <div className="mx-auto max-w-3xl space-y-5">
+      {/* AI Terminal Status Bar */}
+      <div className="rounded-lg border border-border bg-[#0E131F] p-4 space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/20 text-primary border border-primary/30">
+              <BrainCircuit className="h-4 w-4" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-white uppercase tracking-wider">
+                  {domain.replace("-", " ")}
+                </span>
+                <span className="rounded bg-primary/20 text-primary text-[10px] font-bold px-1.5 py-0.2">
+                  Question {turnIndex + 1}
+                </span>
+                {isFollowup && (
+                  <span className="rounded bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-semibold px-1.5 py-0.2">
+                    Adaptive Probe
+                  </span>
+                )}
+              </div>
+              <p className="text-[11px] text-foreground-muted mt-0.5">
+                Target Node: <strong className="text-white font-medium">{conceptNodeLabel}</strong>
+              </p>
+            </div>
           </div>
-          <span className="text-sm text-foreground-muted tabular-nums">
-            {progressPercent}% estimated
-          </span>
+
+          <div className="flex items-center gap-3">
+            <div className="text-right">
+              <span className="text-[11px] font-bold tabular-nums text-white">
+                {progressPercent}%
+              </span>
+              <p className="text-[10px] text-foreground-subtle">Progress</p>
+            </div>
+          </div>
         </div>
 
-        {/* Linear progress bar — cobalt, transition-all duration-300 ease-out */}
-        <div
-          className="h-1 w-full rounded-full bg-border"
-          role="progressbar"
-          aria-valuenow={progressPercent}
-          aria-valuemin={0}
-          aria-valuemax={100}
-        >
+        {/* Linear Progress Bar */}
+        <div className="h-1.5 w-full rounded-full bg-black/40 overflow-hidden">
           <div
-            className="h-1 rounded-full bg-primary transition-all duration-300 ease-out"
+            className="h-full rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-300 ease-out"
             style={{ width: `${progressPercent}%` }}
           />
+        </div>
+
+        {/* 4D Evaluation Rubric Dimension Chips */}
+        <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-border/60 text-[10px] text-foreground-muted">
+          <span className="text-foreground-subtle font-semibold">4D Rubric:</span>
+          <span className="rounded bg-white/[0.04] px-2 py-0.5 text-foreground-muted border border-border/40">
+            1. Correctness (0-100)
+          </span>
+          <span className="rounded bg-white/[0.04] px-2 py-0.5 text-foreground-muted border border-border/40">
+            2. Depth & Mechanics
+          </span>
+          <span className="rounded bg-white/[0.04] px-2 py-0.5 text-foreground-muted border border-border/40">
+            3. Trade-Off Awareness
+          </span>
+          <span className="rounded bg-white/[0.04] px-2 py-0.5 text-foreground-muted border border-border/40">
+            4. Production Applicability
+          </span>
         </div>
       </div>
 
       {errorMsg && (
-        <div className="rounded-md border border-destructive-border bg-destructive-bg p-3 text-xs text-destructive">
+        <div className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-xs text-destructive">
           {errorMsg}
         </div>
       )}
@@ -173,7 +219,7 @@ export function AssessmentTerminal({
         isFollowup={isFollowup}
       />
 
-      {/* Response Input */}
+      {/* Response Input (MCQ Scenario + Free-Text Explanatory Mode) */}
       <ResponseInput
         onSubmit={handleSubmitAnswer}
         isLoading={isLoading}

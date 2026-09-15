@@ -8,7 +8,7 @@ import React, { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { GapReport } from "@/components/assessment/GapReport";
-import { BrainCircuit, Loader2, ArrowRight, CheckCircle2 } from "lucide-react";
+import { BrainCircuit, Loader2, ArrowRight, CheckCircle2, Sparkles, Zap, ShieldCheck } from "lucide-react";
 import type { GapReportData } from "@/types";
 
 interface DomainCard {
@@ -17,6 +17,7 @@ interface DomainCard {
   category: "Engineering & IT" | "AYUSH";
   description: string;
   topics: string[];
+  nodesCount: number;
 }
 
 const DOMAINS: DomainCard[] = [
@@ -25,78 +26,84 @@ const DOMAINS: DomainCard[] = [
     name: "Data Structures & Algorithms",
     category: "Engineering & IT",
     description:
-      "Arrays, linked lists, trees, graphs, dynamic programming, and complexity trade-offs.",
+      "Arrays, linked lists, trees, graphs, dynamic programming, and computational complexity trade-offs.",
     topics: [
       "Sorting & Searching",
       "Trees & Graphs",
       "Dynamic Programming",
       "Complexity Analysis",
     ],
+    nodesCount: 5,
   },
   {
     id: "system-design",
-    name: "System Design",
+    name: "System Design & Distributed Systems",
     category: "Engineering & IT",
     description:
-      "Scalable architecture, load balancing, caching, sharding, and distributed system trade-offs.",
+      "Scalable architecture, layer-7 load balancing, distributed caching, database sharding, and resilience.",
     topics: [
       "Load Balancing",
       "Caching & CDNs",
       "Database Sharding",
       "Microservices",
     ],
+    nodesCount: 5,
   },
   {
     id: "machine-learning",
     name: "Machine Learning & Data Science",
     category: "Engineering & IT",
     description:
-      "Supervised/unsupervised learning, model evaluation, feature engineering, and neural networks.",
+      "Supervised/unsupervised learning, validation metrics, feature engineering, and neural network architectures.",
     topics: [
       "Model Evaluation",
       "Feature Engineering",
       "Neural Networks",
       "Clustering",
     ],
+    nodesCount: 4,
   },
   {
     id: "core-cs",
-    name: "Core Computer Science",
+    name: "Core Computer Science & Systems",
     category: "Engineering & IT",
     description:
-      "Operating systems, computer networks, database normalization, and concurrency control.",
+      "Operating systems, computer networks, database normalization, concurrency control, and deadlock detection.",
     topics: [
       "OS Processes",
       "Networking Basics",
       "Database Normalization",
       "Concurrency",
     ],
+    nodesCount: 4,
   },
   {
     id: "ayurvedic-pharmacology",
     name: "Ayurvedic Pharmacology (Dravyaguna)",
     category: "AYUSH",
     description:
-      "Medicinal plants, Rasa Shastra formulations, pharmacokinetics, and therapeutic applications.",
+      "Medicinal plants, Rasa Shastra formulations, pharmacokinetics, and clinical therapeutic applications.",
     topics: [
       "Dravya Guna",
       "Rasa Shastra",
       "Herbal Formulations",
       "Pharmacopeia",
     ],
+    nodesCount: 4,
   },
   {
     id: "clinical-practice",
     name: "Clinical Practice (Ayurveda)",
     category: "AYUSH",
     description:
-      "Nadi Pariksha diagnostic protocols, Panchakarma therapy management, and patient care.",
+      "Nadi Pariksha diagnostic protocols, Panchakarma therapy management, and patient care regimens.",
     topics: [
       "Nadi Pariksha",
       "Panchakarma Protocol",
       "Dietary Management",
       "Case Taking",
     ],
+    nodesCount: 4,
   },
 ];
 
@@ -167,9 +174,9 @@ function AssessmentDomainSelectionContent() {
   if (viewReportId) {
     if (reportLoading) {
       return (
-        <div className="flex h-64 flex-col items-center justify-center text-center">
-          <Loader2 className="h-6 w-6 animate-spin text-primary mb-2" />
-          <p className="text-sm text-foreground-muted">
+        <div className="flex h-64 flex-col items-center justify-center text-center space-y-3">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <p className="text-xs text-foreground-muted">
             Loading verified assessment report...
           </p>
         </div>
@@ -178,17 +185,15 @@ function AssessmentDomainSelectionContent() {
 
     if (reportData) {
       return (
-        <div>
-          <div className="mb-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => router.push("/assess")}
-              className="text-xs text-foreground-muted hover:text-foreground"
-            >
-              ← Choose another domain
-            </Button>
-          </div>
+        <div className="space-y-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.push("/assess")}
+            className="text-xs text-foreground-muted hover:text-white"
+          >
+            ← Choose another domain
+          </Button>
           <GapReport report={reportData} />
         </div>
       );
@@ -200,57 +205,68 @@ function AssessmentDomainSelectionContent() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-          Adaptive Skill Assessments
-        </h1>
-        <p className="mt-1 text-sm text-foreground-muted">
-          Select a verified knowledge domain to test your conceptual reasoning,
-          trade-off awareness, and practical applicability.
-        </p>
+      {/* Page Header */}
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-white">
+            Adaptive Skill Assessments
+          </h1>
+          <p className="mt-0.5 text-xs text-foreground-muted">
+            Evaluate your conceptual depth, trade-off awareness, and practical production applicability.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 rounded-md border border-border bg-[#0E131F] px-2.5 py-1 text-xs text-foreground-muted">
+            <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+            <span>4D AI Evaluation Engine</span>
+          </div>
+        </div>
       </div>
 
       {errorMsg && (
-        <div className="rounded-md border border-destructive-border bg-destructive-bg p-3 text-xs text-destructive">
+        <div className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-xs text-destructive">
           {errorMsg}
         </div>
       )}
 
-      {/* Engineering & IT Track */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-primary" />
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-foreground-muted">
-            Engineering & Technology Track
-          </h2>
+      {/* Engineering & Technology Track */}
+      <section className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-primary" />
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-white">
+              Engineering & Technology Track
+            </h2>
+          </div>
+          <span className="text-[11px] text-foreground-subtle">4 Domains</span>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2">
           {itDomains.map((domain) => {
             const isLoading = loadingDomain === domain.id;
 
             return (
               <div
                 key={domain.id}
-                className="flex flex-col justify-between rounded-md border border-border bg-card p-5 transition-colors duration-150 hover:border-border-strong"
+                className="group flex flex-col justify-between rounded-lg border border-border bg-[#0E131F] p-4.5 transition-all duration-150 hover:border-primary/40 hover:bg-[#121827]"
               >
-                <div>
-                  <div className="flex items-start justify-between">
-                    <h3 className="text-base font-semibold text-foreground">
+                <div className="space-y-2">
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="text-sm font-semibold text-white group-hover:text-primary transition-colors">
                       {domain.name}
                     </h3>
                     <BrainCircuit className="h-4 w-4 text-primary shrink-0" />
                   </div>
-                  <p className="mt-1.5 text-xs text-foreground-muted leading-relaxed">
+                  <p className="text-xs text-foreground-muted leading-relaxed">
                     {domain.description}
                   </p>
 
-                  <div className="mt-3 flex flex-wrap gap-1.5">
+                  <div className="flex flex-wrap gap-1 pt-1">
                     {domain.topics.map((t) => (
                       <span
                         key={t}
-                        className="rounded-sm border border-border bg-background-muted px-2 py-0.5 text-2xs text-foreground-muted"
+                        className="rounded bg-white/[0.04] px-1.5 py-0.5 text-[10px] text-foreground-muted border border-border/40"
                       >
                         {t}
                       </span>
@@ -258,15 +274,15 @@ function AssessmentDomainSelectionContent() {
                   </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-border flex items-center justify-between">
-                  <span className="text-2xs text-foreground-subtle">
-                    Live Adaptive LLM Evaluation
+                <div className="mt-4 pt-3 border-t border-border/60 flex items-center justify-between">
+                  <span className="text-[11px] text-foreground-subtle">
+                    {domain.nodesCount} Concept Nodes · 4D Rubric
                   </span>
                   <Button
                     size="sm"
                     disabled={!!loadingDomain}
                     onClick={() => handleStartAssessment(domain.id)}
-                    className="h-8 gap-1.5 bg-primary px-3 text-xs text-white hover:bg-primary-hover"
+                    className="h-7 gap-1.5 bg-primary px-3 text-xs font-medium text-white hover:bg-primary-hover shadow-xs"
                   >
                     {isLoading ? (
                       <>
@@ -285,42 +301,45 @@ function AssessmentDomainSelectionContent() {
             );
           })}
         </div>
-      </div>
+      </section>
 
-      {/* AYUSH Track (Ministry of Ayush / PS 26044 requirement) */}
-      <div className="space-y-3 pt-4">
-        <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-success" />
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-foreground-muted">
-            Ministry of Ayush · AYUSH Domain Taxonomy
-          </h2>
+      {/* AYUSH Track */}
+      <section className="space-y-3 pt-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-emerald-400" />
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-white">
+              Ministry of Ayush · AYUSH Domain Taxonomy
+            </h2>
+          </div>
+          <span className="text-[11px] text-foreground-subtle">2 Domains</span>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2">
           {ayushDomains.map((domain) => {
             const isLoading = loadingDomain === domain.id;
 
             return (
               <div
                 key={domain.id}
-                className="flex flex-col justify-between rounded-md border border-border bg-card p-5 transition-colors duration-150 hover:border-border-strong"
+                className="group flex flex-col justify-between rounded-lg border border-border bg-[#0E131F] p-4.5 transition-all duration-150 hover:border-emerald-500/40 hover:bg-[#121827]"
               >
-                <div>
-                  <div className="flex items-start justify-between">
-                    <h3 className="text-base font-semibold text-foreground">
+                <div className="space-y-2">
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="text-sm font-semibold text-white group-hover:text-emerald-400 transition-colors">
                       {domain.name}
                     </h3>
-                    <CheckCircle2 className="h-4 w-4 text-success shrink-0" />
+                    <Sparkles className="h-4 w-4 text-emerald-400 shrink-0" />
                   </div>
-                  <p className="mt-1.5 text-xs text-foreground-muted leading-relaxed">
+                  <p className="text-xs text-foreground-muted leading-relaxed">
                     {domain.description}
                   </p>
 
-                  <div className="mt-3 flex flex-wrap gap-1.5">
+                  <div className="flex flex-wrap gap-1 pt-1">
                     {domain.topics.map((t) => (
                       <span
                         key={t}
-                        className="rounded-sm border border-border bg-background-muted px-2 py-0.5 text-2xs text-foreground-muted"
+                        className="rounded bg-white/[0.04] px-1.5 py-0.5 text-[10px] text-foreground-muted border border-border/40"
                       >
                         {t}
                       </span>
@@ -328,15 +347,15 @@ function AssessmentDomainSelectionContent() {
                   </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-border flex items-center justify-between">
-                  <span className="text-2xs text-foreground-subtle">
-                    AIIA Knowledge Graph Rubric
+                <div className="mt-4 pt-3 border-t border-border/60 flex items-center justify-between">
+                  <span className="text-[11px] text-foreground-subtle">
+                    {domain.nodesCount} Concept Nodes · Clinical Rubric
                   </span>
                   <Button
                     size="sm"
                     disabled={!!loadingDomain}
                     onClick={() => handleStartAssessment(domain.id)}
-                    className="h-8 gap-1.5 bg-primary px-3 text-xs text-white hover:bg-primary-hover"
+                    className="h-7 gap-1.5 bg-emerald-600 px-3 text-xs font-medium text-white hover:bg-emerald-500 shadow-xs"
                   >
                     {isLoading ? (
                       <>
@@ -355,15 +374,19 @@ function AssessmentDomainSelectionContent() {
             );
           })}
         </div>
-      </div>
+      </section>
     </div>
   );
 }
 
-export default function AssessmentDomainSelectionPage() {
+export default function AssessmentPage() {
   return (
     <Suspense
-      fallback={<div className="flex h-64 items-center justify-center" />}
+      fallback={
+        <div className="flex h-64 items-center justify-center">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        </div>
+      }
     >
       <AssessmentDomainSelectionContent />
     </Suspense>

@@ -2,7 +2,6 @@
 // Personalized Opportunities Feed for students.
 // RULE FE-01: Server Component.
 // RULE FE-03: Direct async/await data fetching with Prisma.
-// MVP Feature 4.2: Ranked opportunity feed with match scores, met skills, gap skills, and apply action.
 
 import React from "react";
 import { getServerSession } from "next-auth";
@@ -13,7 +12,7 @@ import { OpportunityCard } from "@/components/opportunities/OpportunityCard";
 import { computeMatchScore } from "@/lib/matching/opportunity-match";
 import type { RequiredSkill, DomainScore, OpportunityWithMatch } from "@/types";
 import type { Prisma, OpportunityType } from "@prisma/client";
-import { Briefcase, Filter } from "lucide-react";
+import { Briefcase, Filter, Sparkles, Building2 } from "lucide-react";
 import Link from "next/link";
 
 interface PageProps {
@@ -102,20 +101,30 @@ export default async function OpportunitiesPage({ searchParams }: PageProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-          Industry Opportunities Feed
-        </h1>
-        <p className="mt-1 text-sm text-foreground-muted">
-          Positions algorithmically matched and ranked against your verified
-          SkillLedger domain proficiency scores.
-        </p>
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-white">
+            Industry Opportunities
+          </h1>
+          <p className="mt-0.5 text-xs text-foreground-muted">
+            Ranked by live compatibility between your verified SkillLedger domain proficiencies and recruiter requirements.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Link
+            href="/applications"
+            className="inline-flex items-center gap-1.5 rounded-md border border-border bg-[#0E131F] px-3 py-1.5 text-xs font-semibold text-foreground-muted hover:text-white transition-colors"
+          >
+            <span>My Applications ({appliedIds.size})</span>
+          </Link>
+        </div>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="flex items-center justify-between border-b border-border pb-3">
-        <div className="flex items-center gap-1.5">
-          <Filter className="h-3.5 w-3.5 text-foreground-subtle mr-1" />
+      {/* Filter Tabs Toolbar */}
+      <div className="flex items-center justify-between border-b border-border/80 pb-3">
+        <div className="flex items-center gap-1.5 overflow-x-auto">
+          <Filter className="h-3.5 w-3.5 text-foreground-subtle mr-1 shrink-0" />
           {filterTabs.map((tab) => {
             const isSelected =
               (!currentTypeFilter && tab.value === "ALL") ||
@@ -129,10 +138,10 @@ export default async function OpportunitiesPage({ searchParams }: PageProps) {
                     ? "/opportunities"
                     : `/opportunities?type=${tab.value}`
                 }
-                className={`rounded-sm px-3 py-1 text-xs font-medium transition-colors duration-150 ${
+                className={`rounded-md px-3 py-1 text-xs font-medium transition-colors whitespace-nowrap ${
                   isSelected
-                    ? "bg-primary text-white font-semibold"
-                    : "bg-background-subtle text-foreground-muted hover:bg-background-muted hover:text-foreground"
+                    ? "bg-primary text-white font-semibold shadow-xs"
+                    : "text-foreground-muted hover:bg-white/5 hover:text-white"
                 }`}
               >
                 {tab.label}
@@ -141,34 +150,31 @@ export default async function OpportunitiesPage({ searchParams }: PageProps) {
           })}
         </div>
 
-        <span className="text-xs text-foreground-subtle">
-          Showing {rankedOpportunities.length} opportunities
+        <span className="text-[11px] text-foreground-subtle shrink-0 hidden sm:inline">
+          {rankedOpportunities.length} {rankedOpportunities.length === 1 ? "position" : "positions"}
         </span>
       </div>
 
-      {/* Opportunity list (UI_UX_SPEC §5.8: list style, NOT card grid) */}
-      <div className="rounded-md border border-border bg-card divide-y divide-border">
-        {rankedOpportunities.length > 0 ? (
-          rankedOpportunities.map((opp) => (
+      {/* Opportunity list */}
+      {rankedOpportunities.length > 0 ? (
+        <div className="space-y-3">
+          {rankedOpportunities.map((opp) => (
             <OpportunityCard
               key={opp.id}
               opportunity={opp}
               hasAppliedInitial={appliedIds.has(opp.id)}
             />
-          ))
-        ) : (
-          <div className="py-16 text-center">
-            <Briefcase className="mx-auto h-10 w-10 text-foreground-subtle mb-3" />
-            <h3 className="text-base font-semibold text-foreground">
-              No opportunities found
-            </h3>
-            <p className="mt-1 text-xs text-foreground-muted">
-              Try changing your filter or check back as industry partners
-              publish new postings.
-            </p>
-          </div>
-        )}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-lg border border-border bg-[#0E131F] py-12 text-center">
+          <Briefcase className="mx-auto h-8 w-8 text-foreground-subtle mb-2" />
+          <p className="text-xs font-semibold text-white">No active opportunities found</p>
+          <p className="mt-1 text-[11px] text-foreground-muted">
+            Try switching filters or take 4D assessments to increase recruiter match eligibility.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

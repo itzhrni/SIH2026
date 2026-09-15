@@ -1,12 +1,12 @@
 // app/(student)/dashboard/page.tsx
-// Student dashboard home: metric cards, opportunity matches, skill snapshot, recent gap report.
+// Student dashboard home: verified skill profile, next best actions, matched opportunities, and 4D evaluation snapshots.
 // RULE FE-01: Server Component.
 // RULE FE-03: Direct async/await data fetching with Prisma.
-// UI_UX_SPEC.md §13: METRIC ROW: 4 cards, MAIN SPLIT: 2/3 opportunity feed | 1/3 portfolio snapshot + recent gap report.
 
 import React from "react";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 import { nextAuthConfig } from "@/lib/auth/next-auth-config";
 import { prisma } from "@/lib/db";
 import { Button } from "@/components/ui/button";
@@ -15,11 +15,30 @@ import { SkillBadge } from "@/components/portfolio/SkillBadge";
 import { computeMatchScore } from "@/lib/matching/opportunity-match";
 import { computeRoleCompatibility } from "@/lib/matching/career-guidance";
 import type { RequiredSkill, DomainScore, OpportunityWithMatch } from "@/types";
-import { BrainCircuit, Award, ArrowRight, Briefcase, BookOpen, GraduationCap, Sparkles } from "lucide-react";
+import {
+  BrainCircuit,
+  Award,
+  ArrowRight,
+  Briefcase,
+  BookOpen,
+  GraduationCap,
+  Sparkles,
+  Zap,
+  TrendingUp,
+  CheckCircle2,
+  AlertTriangle,
+  ChevronRight,
+} from "lucide-react";
 
 export default async function StudentDashboardPage() {
   const session = await getServerSession(nextAuthConfig);
-  const userId = session!.user.id;
+  if (!session || !session.user) {
+    redirect("/login");
+  }
+
+  const userId = session.user.id;
+  const userName = session.user.name || "Student";
+  const firstName = userName.split(" ")[0] || "Student";
 
   // 1. Fetch student's profile, applications, and latest gap report
   const [profile, applicationCount, latestGapReport, userApplications] =
@@ -64,7 +83,7 @@ export default async function StudentDashboardPage() {
   // 2. Fetch active opportunities and rank by match score
   const activeOpportunities = await prisma.opportunity.findMany({
     where: { isActive: true },
-    take: 8,
+    take: 6,
     select: {
       id: true,
       title: true,
@@ -101,159 +120,210 @@ export default async function StudentDashboardPage() {
       };
     })
     .sort((a, b) => b.matchScore - a.matchScore)
-    .slice(0, 4);
+    .slice(0, 3);
 
   // 3. Career guidance role matches
   const roleMatches = computeRoleCompatibility(domainScores).slice(0, 2);
 
+  // Dynamic Next Best Action calculation
+  const topRole = roleMatches[0];
+  const hasGaps = latestGapReport && (latestGapReport.weakNodes as string[]).length > 0;
+  const nextDomainToAssess =
+    assessedDomainsCount === 0
+      ? "dsa"
+      : !domainScores["system-design"]
+      ? "system-design"
+      : !domainScores["machine-learning"]
+      ? "machine-learning"
+      : "core-cs";
+
   return (
     <div className="space-y-6">
-      {/* Page Header */}
+      {/* 1. GREETING & READINESS SUMMARY */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-0.5 text-xs font-semibold text-primary mb-1">
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
             <Sparkles className="h-3.5 w-3.5" />
-            Verified Skill Console
+            <span>National Skill Ledger</span>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Student Learning & Skill Ledger
+          <h1 className="text-2xl font-bold tracking-tight text-white mt-0.5">
+            Good morning, {firstName}
           </h1>
-          <p className="mt-1 text-sm text-foreground-muted">
-            Direct course delivery, 4-dimensional AI assessment, and AI-matched industry internships.
+          <p className="text-xs text-foreground-muted mt-0.5">
+            Your verified skill profile is evolving. {assessedDomainsCount} evaluated knowledge domains recorded.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex items-center gap-2.5">
           <Link href="/courses">
-            <Button variant="outline" className="h-9 gap-1.5 border-border bg-card px-4 text-sm font-medium hover:bg-background-subtle">
-              <BookOpen className="h-4 w-4 text-primary" />
-              In-Portal Courses
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 gap-1.5 border-border bg-[#0E131F] text-xs font-medium hover:bg-white/5"
+            >
+              <BookOpen className="h-3.5 w-3.5 text-primary" />
+              <span>In-Portal Courses</span>
             </Button>
           </Link>
           <Link href="/assess">
-            <Button className="h-9 gap-1.5 bg-primary px-4 text-sm font-medium text-white shadow-sm hover:bg-primary-hover">
-              <BrainCircuit className="h-4 w-4" />
-              Start Assessment
+            <Button
+              size="sm"
+              className="h-8 gap-1.5 bg-primary px-3 text-xs font-semibold text-white hover:bg-primary-hover shadow-xs"
+            >
+              <BrainCircuit className="h-3.5 w-3.5" />
+              <span>Launch 4D Assessment</span>
             </Button>
           </Link>
         </div>
       </div>
 
-      {/* Course & Learning Announcement Banner */}
-      <div className="relative overflow-hidden rounded-lg border border-primary/20 bg-gradient-to-r from-primary/10 via-primary/5 to-background p-5">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="rounded bg-primary px-2 py-0.5 text-2xs font-bold uppercase tracking-wider text-white">
-                New Feature
-              </span>
-              <h2 className="text-base font-bold text-foreground">
-                In-Portal Direct Course Delivery is Live
-              </h2>
+      {/* 2. NEXT BEST ACTION (Prominent, purposeful guidance card) */}
+      <div className="relative overflow-hidden rounded-lg border border-primary/30 bg-gradient-to-r from-blue-950/40 via-[#0E131F] to-[#0E131F] p-4 sm:p-5">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-3 min-w-0">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/20 text-primary border border-primary/30">
+              <Zap className="h-4 w-4" />
             </div>
-            <p className="text-sm text-foreground-muted max-w-2xl">
-              Study curated Engineering (Distributed Systems, Advanced DSA) and AYUSH (Pharmacology, Clinical Panchakarma) modules directly inside SkillLedger with integrated 4D assessment checkpoints.
-            </p>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="rounded bg-primary/20 text-primary border border-primary/30 px-1.5 py-0.2 text-[10px] font-bold uppercase tracking-wider">
+                  Next Best Action
+                </span>
+                {topRole && (
+                  <span className="text-[11px] text-foreground-muted truncate">
+                    Target Role: <strong className="text-white font-medium">{topRole.displayName}</strong> ({topRole.compatibilityPercent}% match)
+                  </span>
+                )}
+              </div>
+              <p className="mt-1 text-xs text-foreground-muted">
+                {hasGaps
+                  ? `Close verified gaps in ${latestGapReport?.domain.toUpperCase()} to unlock higher compatibility and industry recruiter discovery.`
+                  : assessedDomainsCount === 0
+                  ? "Start your foundational assessment to generate cryptographic skill ledger credentials."
+                  : `Complete the ${nextDomainToAssess.toUpperCase()} assessment module to benchmark technical trade-off awareness.`}
+              </p>
+            </div>
           </div>
-          <Link href="/courses" className="shrink-0">
-            <Button className="h-8 gap-1.5 bg-primary px-3 text-xs font-semibold text-white hover:bg-primary-hover">
-              Explore Courses
+
+          <Link href={hasGaps ? `/assess?domain=${latestGapReport?.domain}` : `/assess?domain=${nextDomainToAssess}`} className="shrink-0">
+            <Button
+              size="sm"
+              className="h-8 gap-1.5 bg-primary px-3.5 text-xs font-semibold text-white hover:bg-primary-hover shadow-xs"
+            >
+              <span>{hasGaps ? "Remediate Gaps" : "Start Evaluation"}</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </Button>
           </Link>
         </div>
       </div>
 
-      {/* METRIC ROW: 4 cards with accent highlights */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <div className="rounded-lg border border-border bg-card p-4 transition-all hover:border-primary/40 hover:shadow-sm">
+      {/* 3. YOUR SKILL SNAPSHOT: 4 Purposeful Metric Blocks */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {/* Metric 1 */}
+        <div className="rounded-lg border border-border bg-[#0E131F] p-3.5 transition-colors hover:border-primary/30">
           <div className="flex items-center justify-between text-foreground-muted">
-            <p className="text-xs font-bold uppercase tracking-wider">
-              Avg Skill Score
-            </p>
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground-subtle">
+              Avg Verified Score
+            </span>
             <div className="h-2 w-2 rounded-full bg-primary" />
           </div>
-          <p className="mt-2 text-3xl font-extrabold tabular-nums text-foreground">
-            {avgSkillScore > 0 ? `${avgSkillScore}%` : "—"}
-          </p>
-          <p className="mt-1 text-xs text-foreground-subtle">
-            {assessedDomainsCount > 0
-              ? "Across evaluated domains"
-              : "No assessments completed"}
-          </p>
-        </div>
-
-        <div className="rounded-lg border border-border bg-card p-4 transition-all hover:border-primary/40 hover:shadow-sm">
-          <div className="flex items-center justify-between text-foreground-muted">
-            <p className="text-xs font-bold uppercase tracking-wider">
-              Domains Assessed
-            </p>
-            <div className="h-2 w-2 rounded-full bg-indigo-500" />
+          <div className="mt-2 flex items-baseline gap-1.5">
+            <span className="text-2xl font-bold tabular-nums text-white">
+              {avgSkillScore > 0 ? `${avgSkillScore}%` : "—"}
+            </span>
+            <span className="text-[11px] text-foreground-subtle">
+              {avgSkillScore >= 75 ? "Proficient" : avgSkillScore > 0 ? "Developing" : "Unassessed"}
+            </span>
           </div>
-          <p className="mt-2 text-3xl font-extrabold tabular-nums text-foreground">
-            {assessedDomainsCount}
-          </p>
-          <p className="mt-1 text-xs text-foreground-subtle">
-            6 specialized knowledge graphs
+          <p className="mt-1 text-[11px] text-foreground-muted">
+            {assessedDomainsCount > 0 ? `Across ${assessedDomainsCount} domains` : "No assessments yet"}
           </p>
         </div>
 
-        <div className="rounded-lg border border-border bg-card p-4 transition-all hover:border-primary/40 hover:shadow-sm">
+        {/* Metric 2 */}
+        <div className="rounded-lg border border-border bg-[#0E131F] p-3.5 transition-colors hover:border-primary/30">
           <div className="flex items-center justify-between text-foreground-muted">
-            <p className="text-xs font-bold uppercase tracking-wider">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground-subtle">
+              Domains Evaluated
+            </span>
+            <div className="h-2 w-2 rounded-full bg-indigo-400" />
+          </div>
+          <div className="mt-2 flex items-baseline gap-1.5">
+            <span className="text-2xl font-bold tabular-nums text-white">
+              {assessedDomainsCount}
+            </span>
+            <span className="text-[11px] text-foreground-subtle">of 6 domains</span>
+          </div>
+          <p className="mt-1 text-[11px] text-foreground-muted">
+            Pre-built knowledge graphs
+          </p>
+        </div>
+
+        {/* Metric 3 */}
+        <div className="rounded-lg border border-border bg-[#0E131F] p-3.5 transition-colors hover:border-primary/30">
+          <div className="flex items-center justify-between text-foreground-muted">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground-subtle">
               Verified Badges
-            </p>
-            <div className="h-2 w-2 rounded-full bg-emerald-500" />
+            </span>
+            <div className="h-2 w-2 rounded-full bg-emerald-400" />
           </div>
-          <p className="mt-2 text-3xl font-extrabold tabular-nums text-foreground">
-            {earnedBadgesCount}
-          </p>
-          <p className="mt-1 text-xs text-foreground-subtle">
+          <div className="mt-2 flex items-baseline gap-1.5">
+            <span className="text-2xl font-bold tabular-nums text-white">
+              {earnedBadgesCount}
+            </span>
+            <span className="text-[11px] text-foreground-subtle">earned</span>
+          </div>
+          <p className="mt-1 text-[11px] text-foreground-muted">
             Score ≥ 75 benchmark
           </p>
         </div>
 
-        <div className="rounded-lg border border-border bg-card p-4 transition-all hover:border-primary/40 hover:shadow-sm">
+        {/* Metric 4 */}
+        <div className="rounded-lg border border-border bg-[#0E131F] p-3.5 transition-colors hover:border-primary/30">
           <div className="flex items-center justify-between text-foreground-muted">
-            <p className="text-xs font-bold uppercase tracking-wider">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground-subtle">
               Applications
-            </p>
-            <div className="h-2 w-2 rounded-full bg-amber-500" />
+            </span>
+            <div className="h-2 w-2 rounded-full bg-amber-400" />
           </div>
-          <p className="mt-2 text-3xl font-extrabold tabular-nums text-foreground">
-            {applicationCount}
-          </p>
-          <p className="mt-1 text-xs text-foreground-subtle">
-            Submitted via live portfolio
+          <div className="mt-2 flex items-baseline gap-1.5">
+            <span className="text-2xl font-bold tabular-nums text-white">
+              {applicationCount}
+            </span>
+            <span className="text-[11px] text-foreground-subtle">submitted</span>
+          </div>
+          <p className="mt-1 text-[11px] text-foreground-muted">
+            Live hiring pipeline
           </p>
         </div>
       </div>
 
-      {/* MAIN SPLIT: 2/3 opportunity feed | 1/3 portfolio snapshot + recent gap report */}
+      {/* 4. MAIN SPLIT: 2/3 Opportunity Feed | 1/3 Skills & Learning Snapshot */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Left 2/3: Top Matched Opportunities */}
+        {/* Left 2/3: Opportunities & Role Matching */}
         <div className="space-y-4 lg:col-span-2">
-          <div className="rounded-md border border-border bg-card">
-            <div className="flex items-center justify-between border-b border-border px-4 py-3">
+          {/* Top Matched Opportunities */}
+          <div className="rounded-lg border border-border bg-[#0B0F17] p-4 space-y-3">
+            <div className="flex items-center justify-between border-b border-border/80 pb-3">
               <div>
-                <h3 className="text-lg font-semibold text-foreground">
+                <h2 className="text-sm font-semibold text-white uppercase tracking-wider">
                   Top Matched Opportunities
-                </h3>
-                <p className="text-xs text-foreground-muted">
-                  Ranked by live compatibility between your verified profile and
-                  required skills
+                </h2>
+                <p className="text-[11px] text-foreground-muted">
+                  Ranked by real-time compatibility between your verified profile and recruiter criteria
                 </p>
               </div>
               <Link
                 href="/opportunities"
-                className="text-xs font-medium text-primary hover:underline"
+                className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
               >
-                View All
+                <span>View All</span>
+                <ChevronRight className="h-3 w-3" />
               </Link>
             </div>
 
             {rankedOpportunities.length > 0 ? (
-              <div className="divide-y divide-border">
+              <div className="space-y-3">
                 {rankedOpportunities.map((opp) => (
                   <OpportunityCard
                     key={opp.id}
@@ -263,22 +333,22 @@ export default async function StudentDashboardPage() {
                 ))}
               </div>
             ) : (
-              <div className="py-12 text-center text-sm text-foreground-muted">
-                <Briefcase className="mx-auto h-8 w-8 text-foreground-subtle mb-2" />
-                No active opportunities found. Check back soon.
+              <div className="py-8 text-center text-xs text-foreground-muted">
+                <Briefcase className="mx-auto h-6 w-6 text-foreground-subtle mb-1.5" />
+                No opportunities posted yet. Check back soon.
               </div>
             )}
           </div>
 
           {/* Career Guidance Compatibility */}
           {roleMatches.length > 0 && (
-            <div className="rounded-md border border-border bg-card p-4">
-              <div className="mb-3">
-                <h3 className="text-base font-semibold text-foreground">
-                  Career Guidance Alignment
-                </h3>
-                <p className="text-xs text-foreground-muted">
-                  Compatibility with standard industry role requirement profiles
+            <div className="rounded-lg border border-border bg-[#0B0F17] p-4 space-y-3">
+              <div className="border-b border-border/80 pb-2">
+                <h2 className="text-sm font-semibold text-white uppercase tracking-wider">
+                  Target Role Alignment
+                </h2>
+                <p className="text-[11px] text-foreground-muted">
+                  Live compatibility against standard industry competency models
                 </p>
               </div>
 
@@ -286,29 +356,34 @@ export default async function StudentDashboardPage() {
                 {roleMatches.map((role) => (
                   <div
                     key={role.roleId}
-                    className="rounded-sm border border-border bg-background-subtle p-3"
+                    className="rounded-lg border border-border bg-[#0E131F] p-3 space-y-2"
                   >
                     <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-semibold text-foreground">
+                      <h3 className="text-xs font-semibold text-white">
                         {role.displayName}
-                      </h4>
+                      </h3>
                       <span
-                        className={`inline-flex items-center rounded-sm px-2 py-0.5 text-xs font-semibold tabular-nums border ${
+                        className={`rounded px-1.5 py-0.2 text-[10px] font-bold tabular-nums border ${
                           role.compatibilityPercent >= 70
-                            ? "bg-success-bg text-success border-success-border"
-                            : "bg-warning-bg text-warning border-warning-border"
+                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                            : "bg-amber-500/10 text-amber-300 border-amber-500/30"
                         }`}
                       >
-                        {role.compatibilityPercent}%
+                        {role.compatibilityPercent}% Match
                       </span>
                     </div>
 
-                    <div className="mt-2 text-2xs text-foreground-subtle">
-                      Met:{" "}
-                      {role.metSkills.length > 0
-                        ? role.metSkills.join(", ")
-                        : "None yet"}
+                    <div className="text-[11px] text-foreground-muted">
+                      <span className="text-foreground-subtle">Met: </span>
+                      {role.metSkills.length > 0 ? role.metSkills.join(", ") : "None yet"}
                     </div>
+
+                    {role.gapSkills.length > 0 && (
+                      <div className="text-[11px] text-amber-400/90">
+                        <span className="text-foreground-subtle">Missing: </span>
+                        {role.gapSkills.join(", ")}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -316,18 +391,15 @@ export default async function StudentDashboardPage() {
           )}
         </div>
 
-        {/* Right 1/3: Portfolio snapshot + recent gap report */}
+        {/* Right 1/3: Badges, Latest Assessment & In-Portal Courses */}
         <div className="space-y-4">
           {/* Verified Badges Snapshot */}
-          <div className="rounded-md border border-border bg-card p-4">
-            <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-foreground">
+          <div className="rounded-lg border border-border bg-[#0B0F17] p-4 space-y-3">
+            <div className="flex items-center justify-between border-b border-border/80 pb-2">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-white">
                 Verified Badges
-              </h3>
-              <Link
-                href="/portfolio"
-                className="text-xs text-primary hover:underline"
-              >
+              </h2>
+              <Link href="/portfolio" className="text-[11px] text-primary hover:underline">
                 Portfolio
               </Link>
             </div>
@@ -342,83 +414,101 @@ export default async function StudentDashboardPage() {
                   />
                 ))
               ) : (
-                <p className="text-xs text-foreground-subtle">
-                  Complete an assessment scoring ≥ 75 to unlock a verified
-                  SkillLedger badge.
+                <p className="text-xs text-foreground-muted py-2">
+                  Complete an assessment scoring ≥ 75 to unlock a cryptographic SkillLedger badge.
                 </p>
               )}
             </div>
           </div>
 
-          {/* Recent Gap Report summary */}
-          <div className="rounded-md border border-border bg-card p-4">
-            <div className="mb-2 flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-foreground">
-                Latest Assessment
-              </h3>
+          {/* Recent Gap Report Summary */}
+          <div className="rounded-lg border border-border bg-[#0B0F17] p-4 space-y-3">
+            <div className="flex items-center justify-between border-b border-border/80 pb-2">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-white">
+                Latest 4D Evaluation
+              </h2>
               {latestGapReport && (
-                <span className="text-2xs text-foreground-subtle">
-                  {new Date(latestGapReport.generatedAt).toLocaleDateString(
-                    "en-US",
-                    {
-                      month: "short",
-                      day: "numeric",
-                    },
-                  )}
+                <span className="text-[10px] text-foreground-subtle">
+                  {new Date(latestGapReport.generatedAt).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                  })}
                 </span>
               )}
             </div>
 
             {latestGapReport ? (
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-foreground uppercase">
+                  <span className="text-xs font-semibold text-white uppercase">
                     {latestGapReport.domain}
                   </span>
-                  <span className="text-base font-bold tabular-nums text-foreground">
+                  <span className="text-sm font-bold tabular-nums text-primary">
                     {Math.round(latestGapReport.overallScore)}/100
                   </span>
                 </div>
 
-                <div className="text-xs text-foreground-muted">
-                  <span className="text-success font-medium">
+                <div className="flex items-center gap-2 text-[11px]">
+                  <span className="text-emerald-400 font-medium">
                     {(latestGapReport.strongNodes as string[]).length} strong
                   </span>
-                  {" · "}
-                  <span className="text-warning font-medium">
+                  <span className="text-foreground-subtle">·</span>
+                  <span className="text-amber-400 font-medium">
                     {(latestGapReport.partialNodes as string[]).length} partial
                   </span>
-                  {" · "}
-                  <span className="text-destructive font-medium">
+                  <span className="text-foreground-subtle">·</span>
+                  <span className="text-rose-400 font-medium">
                     {(latestGapReport.weakNodes as string[]).length} gap
                   </span>
                 </div>
 
-                <Link href={`/assess?viewReport=${latestGapReport.id}`}>
+                <Link href={`/assess?viewReport=${latestGapReport.id}`} className="block pt-1">
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full text-xs h-7 mt-1"
+                    className="w-full text-xs h-7 border-border bg-[#0E131F] hover:bg-white/5"
                   >
-                    Review Gap Analysis
+                    Review 4D Gap Report
                   </Button>
                 </Link>
               </div>
             ) : (
-              <div className="py-4 text-center">
-                <p className="text-xs text-foreground-subtle mb-3">
-                  No assessments completed yet.
+              <div className="py-3 text-center space-y-2">
+                <p className="text-xs text-foreground-muted">
+                  No 4D evaluations recorded yet.
                 </p>
                 <Link href="/assess">
                   <Button
                     size="sm"
-                    className="w-full text-xs h-7 bg-primary text-white hover:bg-primary-hover"
+                    className="w-full text-xs h-7 bg-primary text-white hover:bg-primary-hover shadow-xs"
                   >
                     Take Assessment
                   </Button>
                 </Link>
               </div>
             )}
+          </div>
+
+          {/* In-Portal Courses Spotlight */}
+          <div className="rounded-lg border border-border bg-[#0E131F] p-4 space-y-2.5">
+            <div className="flex items-center gap-2">
+              <GraduationCap className="h-4 w-4 text-primary" />
+              <h2 className="text-xs font-semibold text-white uppercase tracking-wider">
+                In-Portal Learning
+              </h2>
+            </div>
+            <p className="text-xs text-foreground-muted">
+              Interactive coursework in Distributed Systems, Advanced DSA, and AYUSH Clinical Pharmacology.
+            </p>
+            <Link href="/courses" className="block pt-1">
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full text-xs h-7 border-primary/30 text-primary hover:bg-primary/10"
+              >
+                Browse Curriculum →
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

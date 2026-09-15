@@ -2,7 +2,6 @@
 // Centralized application status tracking page for students.
 // RULE FE-01: Server Component.
 // RULE FE-03: Direct async/await data fetching with Prisma.
-// MVP Feature 4.3: Applied -> Under Review -> Shortlisted -> Interview Scheduled -> Selected / Not Selected pipeline.
 
 import React from "react";
 import Link from "next/link";
@@ -10,33 +9,33 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { nextAuthConfig } from "@/lib/auth/next-auth-config";
 import { prisma } from "@/lib/db";
-import { FileText, ArrowRight, ExternalLink } from "lucide-react";
+import { FileText, ArrowRight, ExternalLink, Building2, CheckCircle2, Clock, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const STATUS_LABELS: Record<string, { label: string; className: string }> = {
   APPLIED: {
     label: "Applied",
-    className: "bg-background-muted text-foreground-muted border-border",
+    className: "bg-white/[0.04] text-foreground-muted border-border/80",
   },
   UNDER_REVIEW: {
     label: "Under Review",
-    className: "bg-info-bg text-info border-info-border",
+    className: "bg-blue-500/10 text-blue-400 border-blue-500/30",
   },
   SHORTLISTED: {
     label: "Shortlisted",
-    className: "bg-warning-bg text-warning border-warning-border",
+    className: "bg-amber-500/10 text-amber-300 border-amber-500/30",
   },
   INTERVIEW_SCHEDULED: {
     label: "Interview Scheduled",
-    className: "bg-primary-subtle text-primary border-primary/20",
+    className: "bg-purple-500/10 text-purple-400 border-purple-500/30",
   },
   SELECTED: {
     label: "Selected",
-    className: "bg-success-bg text-success border-success-border",
+    className: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
   },
   NOT_SELECTED: {
     label: "Not Selected",
-    className: "bg-destructive-bg text-destructive border-destructive-border",
+    className: "bg-rose-500/10 text-rose-400 border-rose-500/30",
   },
 };
 
@@ -68,153 +67,127 @@ export default async function ApplicationsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-            Application Status Tracker
+          <h1 className="text-2xl font-bold tracking-tight text-white">
+            Applications Tracker
           </h1>
-          <p className="mt-1 text-sm text-foreground-muted">
-            Track real-time candidate stage transitions across internships and
-            full-time hiring pipelines.
+          <p className="mt-0.5 text-xs text-foreground-muted">
+            Track real-time candidate stage transitions across internships and industry pipelines.
           </p>
         </div>
 
         <Link href="/opportunities">
           <Button
-            variant="outline"
             size="sm"
-            className="h-8 gap-1.5 text-xs border-border hover:bg-background-muted"
+            className="h-8 gap-1.5 bg-primary px-3 text-xs font-semibold text-white hover:bg-primary-hover shadow-xs"
           >
-            <span>Browse More Opportunities</span>
+            <span>Explore Opportunities</span>
             <ArrowRight className="h-3.5 w-3.5" />
           </Button>
         </Link>
       </div>
 
-      {/* Applications High-Density Table (UI_UX_SPEC §5.4) */}
-      <div className="rounded-md border border-border bg-card overflow-hidden">
+      {/* Applications High-Density Table */}
+      <div className="rounded-lg border border-border bg-[#0B0F17] overflow-hidden">
         {applications.length > 0 ? (
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border bg-background-subtle">
-                <th
-                  scope="col"
-                  className="px-4 py-2.5 text-left text-xs font-medium uppercase tracking-wide text-foreground-muted"
-                >
-                  Position & Type
-                </th>
-                <th
-                  scope="col"
-                  className="px-4 py-2.5 text-left text-xs font-medium uppercase tracking-wide text-foreground-muted"
-                >
-                  Organization
-                </th>
-                <th
-                  scope="col"
-                  className="px-4 py-2.5 text-left text-xs font-medium uppercase tracking-wide text-foreground-muted"
-                >
-                  Applied Date
-                </th>
-                <th
-                  scope="col"
-                  className="px-4 py-2.5 text-left text-xs font-medium uppercase tracking-wide text-foreground-muted"
-                >
-                  Match at Apply
-                </th>
-                <th
-                  scope="col"
-                  className="px-4 py-2.5 text-left text-xs font-medium uppercase tracking-wide text-foreground-muted"
-                >
-                  Pipeline Stage
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {applications.map((app) => {
-                const statusMeta = STATUS_LABELS[app.status] ?? {
-                  label: app.status,
-                  className:
-                    "bg-background-muted text-foreground-muted border-border",
-                };
-                const companyName =
-                  app.opportunity.postedBy.institution ??
-                  app.opportunity.postedBy.name;
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs text-left">
+              <thead>
+                <tr className="border-b border-border/80 bg-[#0E131F] text-foreground-subtle text-[11px] uppercase tracking-wider font-semibold">
+                  <th scope="col" className="px-4 py-3">
+                    Position & Type
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Organization
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Applied Date
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Match at Apply
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Pipeline Stage
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/60">
+                {applications.map((app) => {
+                  const statusMeta = STATUS_LABELS[app.status] ?? {
+                    label: app.status,
+                    className: "bg-white/[0.04] text-foreground-muted border-border/80",
+                  };
+                  const companyName =
+                    app.opportunity.postedBy.institution ??
+                    app.opportunity.postedBy.name;
 
-                const appliedDate = new Date(app.appliedAt).toLocaleDateString(
-                  "en-US",
-                  {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  },
-                );
+                  const appliedDate = new Date(app.appliedAt).toLocaleDateString(
+                    "en-US",
+                    {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    },
+                  );
 
-                return (
-                  <tr
-                    key={app.id}
-                    className="transition-colors duration-150 hover:bg-background-subtle"
-                  >
-                    <td className="px-4 py-3">
-                      <div className="font-medium text-foreground">
-                        {app.opportunity.title}
-                      </div>
-                      <div className="text-2xs text-foreground-subtle uppercase tracking-wider mt-0.5">
-                        {app.opportunity.type.replace("_", " ")}
-                      </div>
-                    </td>
-
-                    <td className="px-4 py-3 text-foreground-muted">
-                      <div>{companyName}</div>
-                      {app.opportunity.location && (
-                        <div className="text-2xs text-foreground-subtle">
-                          {app.opportunity.location}
+                  return (
+                    <tr
+                      key={app.id}
+                      className="transition-colors hover:bg-white/[0.02]"
+                    >
+                      <td className="px-4 py-3.5">
+                        <div className="font-semibold text-white">
+                          {app.opportunity.title}
                         </div>
-                      )}
-                    </td>
-
-                    <td className="px-4 py-3 text-xs text-foreground-muted tabular-nums">
-                      {appliedDate}
-                    </td>
-
-                    <td className="px-4 py-3">
-                      <span className="inline-flex items-center rounded-sm px-2 py-0.5 text-xs font-semibold tabular-nums bg-primary-subtle text-primary border border-primary/20">
-                        {Math.round(app.matchScoreAtApply)}%
-                      </span>
-                    </td>
-
-                    <td className="px-4 py-3">
-                      <span
-                        className={`inline-flex items-center rounded-sm border px-2 py-0.5 text-xs font-medium ${statusMeta.className}`}
-                        aria-label={`Application status: ${statusMeta.label}`}
-                      >
-                        {statusMeta.label}
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                        <div className="text-[11px] text-foreground-muted flex items-center gap-1 mt-0.5">
+                          <span className="rounded bg-white/[0.04] px-1.5 py-0.2 text-[10px] text-foreground-muted border border-border/40">
+                            {app.opportunity.type}
+                          </span>
+                          {app.opportunity.location && (
+                            <>
+                              <span>·</span>
+                              <span>{app.opportunity.location}</span>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3.5 text-foreground font-medium">
+                        {companyName}
+                      </td>
+                      <td className="px-4 py-3.5 text-foreground-muted tabular-nums">
+                        {appliedDate}
+                      </td>
+                      <td className="px-4 py-3.5">
+                        <span className="font-semibold text-primary tabular-nums">
+                          {app.matchScoreAtApply ? `${Math.round(app.matchScoreAtApply)}%` : "—"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3.5">
+                        <span
+                          className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold border ${statusMeta.className}`}
+                        >
+                          {statusMeta.label}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         ) : (
-          <div className="py-16 text-center">
-            <FileText className="mx-auto h-10 w-10 text-foreground-subtle mb-3" />
-            <h3 className="text-base font-semibold text-foreground">
-              No applications submitted yet
-            </h3>
-            <p className="mt-1 text-xs text-foreground-muted max-w-sm mx-auto">
-              Explore internships and full-time positions in the opportunities
-              feed to apply using your verified live portfolio.
+          <div className="py-12 text-center text-xs text-foreground-muted">
+            <FileText className="mx-auto h-8 w-8 text-foreground-subtle mb-2" />
+            <p className="font-semibold text-white">No applications submitted yet</p>
+            <p className="mt-1 text-foreground-muted">
+              Browse matched opportunities and apply using your live verified SkillLedger portfolio.
             </p>
-            <div className="mt-4">
-              <Link href="/opportunities">
-                <Button
-                  size="sm"
-                  className="h-8 text-xs bg-primary hover:bg-primary-hover text-white"
-                >
-                  Discover Opportunities
-                </Button>
-              </Link>
-            </div>
+            <Link href="/opportunities" className="inline-block mt-4">
+              <Button size="sm" className="h-7 text-xs bg-primary text-white hover:bg-primary-hover">
+                Find Matched Opportunities
+              </Button>
+            </Link>
           </div>
         )}
       </div>

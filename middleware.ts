@@ -9,6 +9,8 @@ const ROLE_ROUTES: Record<string, string> = {
   "/student": "STUDENT",
   "/dashboard": "STUDENT",
   "/assess": "STUDENT",
+  "/courses": "STUDENT",
+  "/profile": "STUDENT",
   "/portfolio": "STUDENT",
   "/opportunities": "STUDENT",
   "/applications": "STUDENT",

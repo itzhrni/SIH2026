@@ -1,31 +1,21 @@
-import { AppShell } from "@/components/layout/AppShell";
-import {
-  LayoutDashboard,
-  BookOpen,
-  Briefcase,
-  FileText,
-  GraduationCap,
-} from "lucide-react";
-import type { NavItem } from "@/components/layout/AppShell";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import { nextAuthConfig } from "@/lib/auth/next-auth-config";
+import { StudentAppShell } from "@/components/student/StudentAppShell";
 
-const navItems: NavItem[] = [
-  { label: "Dashboard", href: "/student/dashboard", icon: LayoutDashboard },
-  { label: "In-Portal Courses", href: "/student/courses", icon: GraduationCap },
-  { label: "Assess Skills", href: "/student/assess", icon: BookOpen },
-  { label: "Learning Programs", href: "/student/learning-programs", icon: FileText },
-  { label: "Opportunities", href: "/student/opportunities", icon: Briefcase },
-  { label: "Applications", href: "/student/applications", icon: FileText },
-  { label: "My Profile", href: "/student/profile", icon: LayoutDashboard },
-];
-
-export default function StudentLayout({
+export default async function StudentLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getServerSession(nextAuthConfig);
+  if (!session || !session.user) {
+    redirect("/login");
+  }
+
   return (
-    <AppShell title="Student Portal" subtitle="Student" navItems={navItems}>
+    <StudentAppShell user={session.user}>
       {children}
-    </AppShell>
+    </StudentAppShell>
   );
 }

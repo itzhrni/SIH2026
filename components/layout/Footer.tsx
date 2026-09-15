@@ -1,7 +1,36 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ShieldCheck } from "lucide-react";
 
 export default function Footer() {
+  const pathname = usePathname();
+  const isPortalOrAuth =
+    pathname === "/login" ||
+    pathname === "/register" ||
+    pathname.startsWith("/student") ||
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/courses") ||
+    pathname.startsWith("/assess") ||
+    pathname.startsWith("/learning-programs") ||
+    pathname.startsWith("/opportunities") ||
+    pathname.startsWith("/applications") ||
+    pathname.startsWith("/profile") ||
+    pathname.startsWith("/portfolio") ||
+    pathname.startsWith("/industry") ||
+    pathname.startsWith("/recruiter-dashboard") ||
+    pathname.startsWith("/pipeline") ||
+    pathname.startsWith("/candidates") ||
+    pathname.startsWith("/my-postings") ||
+    pathname.startsWith("/post") ||
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/swan-dashboard") ||
+    pathname.startsWith("/acad") ||
+    pathname.startsWith("/opportunity-feed") ||
+    pathname.startsWith("/student-applications");
+
+  if (isPortalOrAuth) return null;
   return (
     <footer className="border-t border-border bg-card">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">

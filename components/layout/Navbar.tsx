@@ -68,8 +68,29 @@ interface NavbarProps {
 export default function Navbar({ user }: NavbarProps) {
   const pathname = usePathname();
   const isAuthPage = pathname === "/login" || pathname === "/register";
+  const isPortalPage =
+    pathname.startsWith("/student") ||
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/courses") ||
+    pathname.startsWith("/assess") ||
+    pathname.startsWith("/learning-programs") ||
+    pathname.startsWith("/opportunities") ||
+    pathname.startsWith("/applications") ||
+    pathname.startsWith("/profile") ||
+    pathname.startsWith("/portfolio") ||
+    pathname.startsWith("/industry") ||
+    pathname.startsWith("/recruiter-dashboard") ||
+    pathname.startsWith("/pipeline") ||
+    pathname.startsWith("/candidates") ||
+    pathname.startsWith("/my-postings") ||
+    pathname.startsWith("/post") ||
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/swan-dashboard") ||
+    pathname.startsWith("/acad") ||
+    pathname.startsWith("/opportunity-feed") ||
+    pathname.startsWith("/student-applications");
+
   const role = user?.role || "";
-  
   const isLoggedIn = !!role;
 
   let navItems: NavItem[] = [];
@@ -92,7 +113,8 @@ export default function Navbar({ user }: NavbarProps) {
       .slice(0, 2);
   };
 
-  if (isAuthPage) return null;
+  // Portal and auth pages provide their own dedicated shells/layouts
+  if (isAuthPage || isPortalPage) return null;
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
